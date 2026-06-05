@@ -509,8 +509,8 @@
       flex-direction: column;
     }
     .format-source { text-align: left; }
-    .format-grid { grid-template-columns: 1fr; }
-    .format-footnote { grid-template-columns: 1fr; }
+    .format-grid { grid-template-columns: 1fr; gap: 22px; }
+    .format-footnote { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .app-grid { grid-template-columns: 1fr; }
   }
 
@@ -518,13 +518,17 @@
     .hero { padding-top: 22px; }
     .hero-actions { display: grid; grid-template-columns: 1fr; }
     .primary-btn, .secondary-btn { width: 100%; }
-    .quick-stats { grid-template-columns: 1fr; }
+    .quick-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .format-title-pill {
       width: 100%;
       min-height: 50px;
       padding: 0 16px;
     }
-    .station-body { flex-direction: column; gap: 6px; }
+    .format-source { font-size: 11px; letter-spacing: 0.5px; }
+    .station-acc summary { padding: 15px 4px; }
+    .station-name { font-size: 17px; }
+    .station-body { flex-direction: column; gap: 5px; padding: 0 4px 15px; }
+    .format-note-item { padding: 11px; }
     .feature-list { grid-template-columns: 1fr; }
     .links { grid-template-columns: 1fr; }
     section { padding: 42px 16px; }
