@@ -7,6 +7,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>HYROX Tracker - Race Practice App</title>
+<script>
+  // Cold launch: jump straight to the last tracker used.
+  // Skipped when arriving via the in-app Home button (?home=1).
+  (function() {
+    try {
+      if (location.search.indexOf('home=1') !== -1) return;
+      var last = localStorage.getItem('hyrox_last_page');
+      if (last) location.replace(last);
+    } catch(e) {}
+  })();
+</script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
@@ -195,37 +206,334 @@
     line-height: 1.55;
   }
 
-  .race-flow {
+  .format-grid {
     display: grid;
-    grid-template-columns: repeat(8, minmax(96px, 1fr));
-    gap: 8px;
-    margin-top: 26px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+    grid-template-columns: minmax(300px, 0.92fr) minmax(360px, 1.08fr);
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 30px;
   }
 
-  .flow-step {
-    min-height: 112px;
+  .competition-card,
+  .station-card {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel);
+  }
+
+  .competition-card {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .format-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 26px;
+  }
+
+  .format-title-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 58px;
+    background: var(--yellow);
+    color: #050505;
+    padding: 0 22px;
+    font-size: clamp(26px, 4vw, 44px);
+    font-weight: 950;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .format-source {
+    color: var(--dim);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .format-label {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 38px;
+    background: var(--yellow);
+    color: #0b0b0b;
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 950;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .competition-visual {
+    display: grid;
+    grid-template-columns: 1fr 58px;
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .workout-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .workout-tile {
+    min-height: 146px;
+    border: 1px solid #2d2d2d;
+    border-radius: 7px;
+    background: #111;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tile-num {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 32px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    background: var(--yellow);
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 950;
+    z-index: 2;
+  }
+
+  .tile-art {
+    position: relative;
+    min-height: 82px;
+    border-bottom: 1px solid #2a2a2a;
+    background:
+      linear-gradient(135deg, rgba(240,192,0,0.22), rgba(104,167,255,0.06)),
+      radial-gradient(circle at 70% 34%, rgba(255,255,255,0.16), transparent 22%),
+      #151515;
+    overflow: hidden;
+  }
+
+  .tile-art::before,
+  .tile-art::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,255,0.42);
+  }
+
+  .tile-art::before {
+    width: 58%;
+    height: 2px;
+    left: 22%;
+    top: 48%;
+    transform: rotate(-18deg);
+  }
+
+  .tile-art::after {
+    width: 42px;
+    height: 42px;
+    right: 18px;
+    top: 20px;
+    border: 3px solid rgba(240,192,0,0.9);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .tile-art-sled::before,
+  .tile-art-pull::before {
+    width: 64%;
+    height: 12px;
+    left: 18%;
+    top: 56%;
+    transform: none;
+    border-radius: 20px;
+    background: rgba(240,192,0,0.82);
+  }
+
+  .tile-art-burpee::before,
+  .tile-art-lunge::before {
+    width: 72px;
+    height: 2px;
+    left: 22%;
+    top: 58%;
+    transform: rotate(24deg);
+  }
+
+  .tile-art-row::after,
+  .tile-art-ski::after {
+    width: 52px;
+    height: 52px;
+    border-width: 4px;
+  }
+
+  .tile-art-carry::before {
+    width: 58%;
+    height: 28px;
+    left: 23%;
+    top: 44%;
+    transform: none;
+    border: 2px solid rgba(240,192,0,0.9);
+    border-radius: 18px;
+    background: transparent;
+  }
+
+  .tile-art-wall::after {
+    width: 34px;
+    height: 34px;
+    right: 28px;
+    top: 12px;
+    background: var(--yellow);
+    border: 0;
+  }
+
+  .tile-main {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .tile-body {
+    position: relative;
+    min-height: 64px;
+    padding: 13px 12px 12px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .tile-meta {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .run-ladder {
+    display: grid;
+    grid-template-rows: auto repeat(8, 1fr) auto;
+    gap: 5px;
+    min-width: 58px;
+    background: #f5f5f5;
+    color: #111;
+    border-radius: 4px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .ladder-cap {
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .ladder-run {
+    display: grid;
+    place-items: center;
+    border-top: 1px solid #d9d9d9;
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .ladder-run span {
+    display: grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    margin-top: 4px;
+    background: var(--yellow);
+    font-size: 10px;
+  }
+
+  .station-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .station-card {
+    display: grid;
+    grid-template-columns: 44px 1fr auto 18px;
+    gap: 14px;
+    align-items: center;
+    padding: 13px 14px;
+  }
+
+  .station-chevron {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .station-index {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: #1f1a00;
+    color: var(--yellow);
+    font-weight: 950;
+  }
+
+  .station-name {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+
+  .station-detail {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .station-measure {
+    color: var(--yellow);
+    font-size: 12px;
+    font-weight: 950;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .format-footnote {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .format-note-item {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #111;
     padding: 12px;
   }
 
-  .flow-run {
-    color: var(--blue);
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
-
-  .flow-station {
+  .format-note-item strong {
+    display: block;
     color: #fff;
     font-size: 13px;
-    font-weight: 800;
-    line-height: 1.25;
+    margin-bottom: 5px;
+  }
+
+  .format-note-item span {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
   }
 
   .app-band {
@@ -367,6 +675,20 @@
 
     .brand { margin-bottom: 34px; }
     .quick-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .format-heading-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .format-source { text-align: left; }
+    .format-grid { grid-template-columns: 1fr; }
+    .competition-visual { grid-template-columns: 1fr; }
+    .run-ladder {
+      grid-template-columns: auto repeat(8, minmax(44px, 1fr)) auto;
+      grid-template-rows: none;
+      overflow-x: auto;
+    }
+    .ladder-run { border-top: 0; border-left: 1px solid #d9d9d9; min-height: 54px; }
+    .format-footnote { grid-template-columns: 1fr; }
     .app-grid { grid-template-columns: 1fr; }
   }
 
@@ -375,6 +697,32 @@
     .hero-actions { display: grid; grid-template-columns: 1fr; }
     .primary-btn, .secondary-btn { width: 100%; }
     .quick-stats { grid-template-columns: 1fr; }
+    .competition-card { padding: 14px; }
+    .format-title-pill {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 16px;
+    }
+    .workout-grid { grid-template-columns: 1fr; }
+    .workout-tile { min-height: 126px; }
+    .tile-art { min-height: 68px; }
+    .station-card {
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .station-index {
+      width: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+    .station-measure {
+      grid-column: 2;
+      text-align: left;
+      white-space: normal;
+      margin-top: -4px;
+    }
+    .station-chevron { display: none; }
     .feature-list { grid-template-columns: 1fr; }
     .links { grid-template-columns: 1fr; }
     section { padding: 42px 16px; }
@@ -386,6 +734,32 @@
       navigator.serviceWorker.register('sw.js');
     });
   }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    const startLink = document.querySelector('[data-scroll-target="choose-tracker"]');
+    const target = document.getElementById('choose-tracker');
+    if (!startLink || !target) return;
+
+    startLink.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const startY = window.scrollY;
+      const endY = target.getBoundingClientRect().top + startY;
+      const distance = endY - startY;
+      const duration = 420;
+      const startedAt = performance.now();
+
+      function step(now) {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        window.scrollTo(0, startY + distance * eased);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+      history.replaceState(null, '', '#choose-tracker');
+    });
+  });
 </script>
 </head>
 <body>
@@ -396,7 +770,7 @@
       <h1>Know the race. Track the work.</h1>
       <p class="lead">HYROX is an indoor fitness race that alternates running with functional workout stations. This app gives you a simple race-day checklist, timers, progress tracking, and shareable results for practice runs.</p>
       <div class="hero-actions">
-        <a class="primary-btn" href="#start">Start Tracking</a>
+        <a class="primary-btn" href="#choose-tracker" data-scroll-target="choose-tracker">Start Tracking</a>
         <a class="secondary-btn" href="#what-is-hyrox">What Is HYROX?</a>
       </div>
       <div class="quick-stats" aria-label="HYROX race format">
@@ -420,16 +794,119 @@
     <div class="section-inner">
       <div class="section-kicker">What is HYROX?</div>
       <h2>A fixed-format fitness race.</h2>
-      <p class="section-copy">Every HYROX race follows the same basic pattern: run 1 km, complete one workout station, then repeat until you have completed 8 km of running and 8 stations. The stations include SkiErg, sled push, sled pull, burpee broad jumps, rowing, farmer's carry, sandbag lunges, and wall balls.</p>
-      <div class="race-flow" aria-label="HYROX race order">
-        <div class="flow-step"><div class="flow-run">Run 1</div><div class="flow-station">SkiErg</div></div>
-        <div class="flow-step"><div class="flow-run">Run 2</div><div class="flow-station">Sled Push</div></div>
-        <div class="flow-step"><div class="flow-run">Run 3</div><div class="flow-station">Sled Pull</div></div>
-        <div class="flow-step"><div class="flow-run">Run 4</div><div class="flow-station">Burpee Broad Jumps</div></div>
-        <div class="flow-step"><div class="flow-run">Run 5</div><div class="flow-station">Row</div></div>
-        <div class="flow-step"><div class="flow-run">Run 6</div><div class="flow-station">Farmer's Carry</div></div>
-        <div class="flow-step"><div class="flow-run">Run 7</div><div class="flow-station">Sandbag Lunges</div></div>
-        <div class="flow-step"><div class="flow-run">Run 8</div><div class="flow-station">Wall Balls</div></div>
+      <p class="section-copy">Every HYROX race uses the same structure worldwide: run 1 km, complete the next workout station, then repeat until all 8 runs and 8 stations are finished. That fixed order makes it easy to train, compare splits, and know exactly what is coming next.</p>
+      <div class="format-heading-row">
+        <div class="format-title-pill">Race Format</div>
+        <div class="format-source">Based on the official HYROX race order</div>
+      </div>
+      <div class="format-grid" aria-label="HYROX race format">
+        <div class="competition-card">
+          <div class="format-label">The competition</div>
+          <div class="competition-visual">
+            <div class="workout-grid" aria-label="Workout station order">
+              <div class="workout-tile">
+                <div class="tile-art tile-art-ski"><div class="tile-num">01</div></div>
+                <div class="tile-body"><div class="tile-main">SkiErg</div><div class="tile-meta">1000 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-sled"><div class="tile-num">02</div></div>
+                <div class="tile-body"><div class="tile-main">Sled Push</div><div class="tile-meta">50 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-pull"><div class="tile-num">03</div></div>
+                <div class="tile-body"><div class="tile-main">Sled Pull</div><div class="tile-meta">50 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-burpee"><div class="tile-num">04</div></div>
+                <div class="tile-body"><div class="tile-main">Burpee Broad Jumps</div><div class="tile-meta">80 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-row"><div class="tile-num">05</div></div>
+                <div class="tile-body"><div class="tile-main">Rowing</div><div class="tile-meta">1000 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-carry"><div class="tile-num">06</div></div>
+                <div class="tile-body"><div class="tile-main">Farmer's Carry</div><div class="tile-meta">200 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-lunge"><div class="tile-num">07</div></div>
+                <div class="tile-body"><div class="tile-main">Sandbag Lunges</div><div class="tile-meta">100 m</div></div>
+              </div>
+              <div class="workout-tile">
+                <div class="tile-art tile-art-wall"><div class="tile-num">08</div></div>
+                <div class="tile-body"><div class="tile-main">Wall Balls</div><div class="tile-meta">100 reps</div></div>
+              </div>
+            </div>
+            <div class="run-ladder" aria-label="One kilometer run before each station">
+              <div class="ladder-cap">Start</div>
+              <div class="ladder-run">1 km run <span>01</span></div>
+              <div class="ladder-run">1 km run <span>02</span></div>
+              <div class="ladder-run">1 km run <span>03</span></div>
+              <div class="ladder-run">1 km run <span>04</span></div>
+              <div class="ladder-run">1 km run <span>05</span></div>
+              <div class="ladder-run">1 km run <span>06</span></div>
+              <div class="ladder-run">1 km run <span>07</span></div>
+              <div class="ladder-run">1 km run <span>08</span></div>
+              <div class="ladder-cap">Finish</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="station-list" aria-label="Station details">
+          <div class="station-card">
+            <div class="station-index">01</div>
+            <div><div class="station-name">SkiErg</div><div class="station-detail">Controlled pulling power after the opening kilometer.</div></div>
+            <div class="station-measure">1000 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">02</div>
+            <div><div class="station-name">Sled Push</div><div class="station-detail">Heavy leg drive over a short, demanding lane.</div></div>
+            <div class="station-measure">50 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">03</div>
+            <div><div class="station-name">Sled Pull</div><div class="station-detail">Grip, posterior chain, and steady rope control.</div></div>
+            <div class="station-measure">50 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">04</div>
+            <div><div class="station-name">Burpee Broad Jumps</div><div class="station-detail">Full-body ground-to-forward movement under fatigue.</div></div>
+            <div class="station-measure">80 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">05</div>
+            <div><div class="station-name">Rowing</div><div class="station-detail">A second endurance machine after the halfway mark.</div></div>
+            <div class="station-measure">1000 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">06</div>
+            <div><div class="station-name">Farmer's Carry</div><div class="station-detail">Loaded carry for grip, posture, and breathing control.</div></div>
+            <div class="station-measure">200 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">07</div>
+            <div><div class="station-name">Sandbag Lunges</div><div class="station-detail">Leg durability and balance late in the race.</div></div>
+            <div class="station-measure">100 m</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+          <div class="station-card">
+            <div class="station-index">08</div>
+            <div><div class="station-name">Wall Balls</div><div class="station-detail">The final station: squat, throw, repeat to the finish.</div></div>
+            <div class="station-measure">100 reps</div>
+            <div class="station-chevron">⌄</div>
+          </div>
+        </div>
+      </div>
+      <div class="format-footnote" aria-label="Race format summary">
+        <div class="format-note-item"><strong>Same order every time</strong><span>The station sequence is fixed, so training sessions can mirror race day.</span></div>
+        <div class="format-note-item"><strong>Weights vary by division</strong><span>Open, Pro, Singles, and Doubles use different loading or workload rules.</span></div>
+        <div class="format-note-item"><strong>This app tracks practice</strong><span>Pick your division below to follow the race order with timers and progress.</span></div>
       </div>
       <p class="note">Race-format summary based on the official <a href="https://hyrox.com/the-fitness-race/" rel="noopener">HYROX fitness race overview</a>. This tracker is an independent practice tool and is not an official HYROX product.</p>
     </div>
@@ -467,7 +944,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="choose-tracker">
     <div class="section-inner">
       <div class="section-kicker">Choose your tracker</div>
       <h2>Start with your division.</h2>
