@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HYROX Tracker – Home</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0d0d;
+    color: #e8e8e8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+  }
+  .logo {
+    font-size: 36px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .logo em { color: #f0c000; font-style: normal; }
+  .subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 40px;
+  }
+  .division-group {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .division-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f0c000;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .division-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #222;
+  }
+  .links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .link-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .link-card:hover {
+    background: #222;
+    border-color: #f0c000;
+    transform: translateY(-2px);
+  }
+  .link-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .link-card-desc {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+    .links { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">HYROX <em>Tracker</em></div>
+    <div class="subtitle">Practice Run Checklists</div>
+
+    <div class="division-group">
+      <div class="division-title">Men's Open</div>
+      <div class="links">
+        <a href="hyrox-open-singles.html" class="link-card">
+          <div class="link-card-title">Singles</div>
+          <div class="link-card-desc">152kg Push · 103kg Pull</div>
+        </a>
+        <a href="hyrox-open-doubles.html" class="link-card">
+          <div class="link-card-title">Doubles</div>
+          <div class="link-card-desc">Split Workload</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="division-group">
+      <div class="division-title">Men's Pro</div>
+      <div class="links">
+        <a href="hyrox-pro-singles.html" class="link-card">
+          <div class="link-card-title">Singles</div>
+          <div class="link-card-desc">202kg Push · 153kg Pull</div>
+        </a>
+        <a href="hyrox-pro-doubles.html" class="link-card">
+          <div class="link-card-title">Doubles</div>
+          <div class="link-card-desc">Split Workload</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

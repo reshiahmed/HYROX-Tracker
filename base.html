@@ -655,20 +655,14 @@ main {
   .row.done .row-text { color: #aaa; }
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div style="display:flex; align-items:center; gap: 14px;">
-      <a href="index.html" style="text-decoration:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; background:#141414; border:1px solid #2e2e2e; transition:all 0.15s ease;" onmouseover="this.style.borderColor='#f0c000'" onmouseout="this.style.borderColor='#2e2e2e'" aria-label="Home">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0c000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-      </a>
-      <div>
+    <div>
       <span class="title-sub">Practice Run</span>
       <div class="title-main">HYROX <em>Doubles</em></div>
-      </div>
     </div>
     <div class="header-right">
       <button class="reset-btn" id="resetBtn">&#8635;<span class="reset-label"> Reset</span></button>
@@ -682,7 +676,7 @@ main {
       </svg>
       <div class="progress-ring-pct" id="pctLabel">0%</div>
     </div>
-    <div class="total-timer inactive" id="totalTimer">00:00:00.00</div>
+    <div class="total-timer inactive" id="totalTimer">00:00:00</div>
   </div>
 </div>
 
@@ -794,18 +788,15 @@ function fmt(s) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const sec = Math.floor(s % 60);
-  const ms = Math.floor((s % 1) * 100);
-  const msStr = String(ms).padStart(2,'0');
-  if (h > 0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+msStr;
-  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+msStr;
+  if (h > 0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
 }
 
 function fmtTotal(s) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const sec = Math.floor(s % 60);
-  const ms = Math.floor((s % 1) * 100);
-  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+String(ms).padStart(2,'0');
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
 }
 
 function isSectionComplete(sec) {
@@ -997,7 +988,7 @@ function buildUI() {
 
     const timerEl = document.createElement('span');
     timerEl.className = 'sec-timer';
-    timerEl.textContent = '--:--.--';
+    timerEl.textContent = '--:--';
     sectionTimerEls[sec.id] = timerEl;
 
     // Restore timer display on load
@@ -1138,33 +1129,8 @@ function buildSummary() {
       </table>
       <div class="summary-footer">HYROX Doubles · Men’s Open · Practice Run</div>
     </div>
-    <div style="text-align:center; margin-top: 16px;">
-      <button id="savePhotoBtn" style="background:#f0c000; color:#000; border:none; padding:12px 24px; border-radius:8px; font-weight:800; text-transform:uppercase; letter-spacing:1px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:8px; transition:transform 0.1s ease;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        Save as Photo
-      </button>
-    </div>
   `;
   wrap.classList.add('visible');
-  
-  document.getElementById('savePhotoBtn').addEventListener('click', function() {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = "Saving...";
-    btn.disabled = true;
-    
-    setTimeout(() => {
-      html2canvas(document.querySelector('.summary'), { backgroundColor: '#0a0a0a', scale: 2 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'hyrox-summary.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      });
-    }, 100);
-  });
 }
 
 const resetModal = document.getElementById('resetModal');
@@ -1188,7 +1154,7 @@ modalConfirm.addEventListener('click', function() {
   state = { timers: {} };
   save();
   const totalEl = document.getElementById('totalTimer');
-  totalEl.textContent = '00:00:00.00';
+  totalEl.textContent = '00:00:00';
   totalEl.classList.add('inactive');
   startWrap.classList.remove('hidden');
   buildUI();
@@ -1245,7 +1211,7 @@ evaluateTimers();
 refreshLockStates();
 
 // Start global tick
-tickInterval = setInterval(tick, 30);
+tickInterval = setInterval(tick, 500);
 </script>
 </body>
 </html>

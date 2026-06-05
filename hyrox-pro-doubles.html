@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HYROX Doubles – Practice Checklist</title>
+<title>HYROX Pro Doubles – Practice Checklist</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -667,7 +667,7 @@ main {
       </a>
       <div>
       <span class="title-sub">Practice Run</span>
-      <div class="title-main">HYROX <em>Doubles</em></div>
+      <div class="title-main">HYROX <em>Pro Doubles</em></div>
       </div>
     </div>
     <div class="header-right">
@@ -752,25 +752,25 @@ const INFO_CARDS = [
 ];
 
 const SECTIONS = [
-  { id:'run1',  type:'run',     name:'Run 1',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
+  { id:'run1',  type:'run',     name:'Run 1',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
   { id:'st1',   type:'station', name:'Station 1 — SkiErg',             badge:'1000 m',   item:'1000 m completed',      detail:'500 m each · Switch once' },
-  { id:'run2',  type:'run',     name:'Run 2',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
-  { id:'st2',   type:'station', name:'Station 2 — Sled Push',          badge:'50 m',     item:'50 m completed',        detail:'152 kg · 25 m each · Switch at halfway' },
-  { id:'run3',  type:'run',     name:'Run 3',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
-  { id:'st3',   type:'station', name:'Station 3 — Sled Pull',          badge:'50 m',     item:'50 m completed',        detail:'103 kg · 25 m each · Hand over hand' },
-  { id:'run4',  type:'run',     name:'Run 4',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
+  { id:'run2',  type:'run',     name:'Run 2',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
+  { id:'st2',   type:'station', name:'Station 2 — Sled Push',          badge:'50 m',     item:'50 m completed',        detail:'202 kg · 25 m each · Switch at halfway' },
+  { id:'run3',  type:'run',     name:'Run 3',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
+  { id:'st3',   type:'station', name:'Station 3 — Sled Pull',          badge:'50 m',     item:'50 m completed',        detail:'153 kg · 25 m each · Hand over hand' },
+  { id:'run4',  type:'run',     name:'Run 4',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
   { id:'st4',   type:'station', name:'Station 4 — Burpee Broad Jumps', badge:'80 m',     item:'80 m completed',        detail:'40 m each · Alternate every 10 m' },
-  { id:'run5',  type:'run',     name:'Run 5',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
+  { id:'run5',  type:'run',     name:'Run 5',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
   { id:'st5',   type:'station', name:'Station 5 — Row',                badge:'1000 m',   item:'1000 m completed',      detail:'500 m each · Switch once' },
-  { id:'run6',  type:'run',     name:'Run 6',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
-  { id:'st6',   type:'station', name:'Station 6 — Farmers Carry',      badge:'200 m',    item:'200 m completed',       detail:'2 × 24 kg each · Full 200 m together' },
-  { id:'run7',  type:'run',     name:'Run 7',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
-  { id:'st7',   type:'station', name:'Station 7 — Sandbag Lunges',     badge:'100 m',    item:'100 m completed',       detail:'20 kg · 50 m each · Switch at halfway' },
-  { id:'run8',  type:'run',     name:'Run 8',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
-  { id:'st8',   type:'station', name:'Station 8 — Wall Balls',         badge:'100 reps', item:'100 reps completed',    detail:'6 kg ball · 3 m target · 50 reps each' },
+  { id:'run6',  type:'run',     name:'Run 6',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
+  { id:'st6',   type:'station', name:'Station 6 — Farmers Carry',      badge:'200 m',    item:'200 m completed',       detail:'2 × 32 kg each · Full 200 m together' },
+  { id:'run7',  type:'run',     name:'Run 7',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
+  { id:'st7',   type:'station', name:'Station 7 — Sandbag Lunges',     badge:'100 m',    item:'100 m completed',       detail:'30 kg · 50 m each · Switch at halfway' },
+  { id:'run8',  type:'run',     name:'Run 8',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 4:45–5:15/km' },
+  { id:'st8',   type:'station', name:'Station 8 — Wall Balls',         badge:'100 reps', item:'100 reps completed',    detail:'9 kg ball · 3 m target · 50 reps each' },
 ];
 
-const KEY = 'hyrox_v4';
+const KEY = 'hyrox_pro_doubles_v1';
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
 
@@ -1136,7 +1136,7 @@ function buildSummary() {
       <table class="summary-table">
         ${rows}
       </table>
-      <div class="summary-footer">HYROX Doubles · Men’s Open · Practice Run</div>
+      <div class="summary-footer">HYROX Doubles · Men’s Pro · Practice Run</div>
     </div>
     <div style="text-align:center; margin-top: 16px;">
       <button id="savePhotoBtn" style="background:#f0c000; color:#000; border:none; padding:12px 24px; border-radius:8px; font-weight:800; text-transform:uppercase; letter-spacing:1px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:8px; transition:transform 0.1s ease;">
