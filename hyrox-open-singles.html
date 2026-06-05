@@ -794,6 +794,15 @@ try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
 
 if (!state.timers) state.timers = {};
 
+if (state.totalStart && !state.raceStarted && !state.totalDone && !SECTIONS.some(sec => state[sec.id])) {
+  state = { timers: {} };
+  save();
+}
+
+function hasRaceStarted() {
+  return !!(state.raceStarted || state.totalStart || state.totalDone);
+}
+
 let tickInterval = null;
 const sectionTimerEls = {}; // id -> DOM element
 
@@ -900,6 +909,8 @@ function stopTotalTimer() {
 
 // Called whenever any checkbox changes — figures out what to start/stop
 function evaluateTimers() {
+  if (!hasRaceStarted()) return;
+
   let prevComplete = true; // sections before index 0 are "done"
 
   for (let idx = 0; idx < SECTIONS.length; idx++) {
@@ -1213,7 +1224,7 @@ buildUI();
 
 // A section row is locked if the race hasn't started OR a prior section isn't done
 function refreshLockStates() {
-  const raceStarted = !!(state.totalStart || state.totalDone);
+  const raceStarted = hasRaceStarted();
   SECTIONS.forEach((sec, idx) => {
     const rowEl = document.getElementById('row_' + sec.id);
     if (!rowEl) return;
@@ -1230,10 +1241,11 @@ const startBtn  = document.getElementById('startBtn');
 function hideStartBtn() { startWrap.classList.add('hidden'); }
 
 // Hide if race already in progress
-if (state.totalStart || state.totalDone) hideStartBtn();
+if (hasRaceStarted()) hideStartBtn();
 
 startBtn.addEventListener('click', function() {
-  if (state.totalStart || state.totalDone) return;
+  if (hasRaceStarted()) return;
+  state.raceStarted = true;
   startTotalTimer();
   startTimer('run1');
   hideStartBtn();
@@ -1248,12 +1260,12 @@ document.getElementById('prepDone').addEventListener('click', function() {
 });
 
 // Show prep modal on first load if race not yet started
-if (!state.totalStart && !state.totalDone) {
+if (!hasRaceStarted()) {
   prepModal.classList.add('visible');
 }
 
-// Resume any running timers on page load
-evaluateTimers();
+// Resume only explicitly started races; first load must stay idle until Start Race.
+if (hasRaceStarted()) evaluateTimers();
 refreshLockStates();
 
 // Start global tick

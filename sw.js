@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'hyrox-tracker-v1';
+const CACHE_VERSION = 'hyrox-tracker-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const APP_SHELL = [
   './hyrox-open-singles.html',
   './hyrox-pro-doubles.html',
   './hyrox-pro-singles.html',
+  './assets/landing-hero.png',
   './manifest.json',
   './vendor/html2canvas.min.js',
   './icons/icon-192.png',
