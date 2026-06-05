@@ -208,9 +208,9 @@
 
   .format-grid {
     display: grid;
-    grid-template-columns: minmax(300px, 0.92fr) minmax(360px, 1.08fr);
-    gap: 24px;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+    gap: 34px;
+    align-items: start;
     margin-top: 30px;
   }
 
@@ -222,10 +222,14 @@
   }
 
   .competition-card {
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .competition-img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   .format-heading-row {
@@ -272,241 +276,66 @@
     text-transform: uppercase;
   }
 
-  .competition-visual {
-    display: grid;
-    grid-template-columns: 1fr 58px;
-    gap: 14px;
-    align-items: stretch;
-  }
-
-  .workout-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .workout-tile {
-    min-height: 146px;
-    border: 1px solid #2d2d2d;
-    border-radius: 7px;
-    background: #111;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .tile-num {
-    position: absolute;
-    left: 10px;
-    bottom: 10px;
-    width: 32px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    background: var(--yellow);
-    color: #0a0a0a;
-    font-size: 14px;
-    font-weight: 950;
-    z-index: 2;
-  }
-
-  .tile-art {
-    position: relative;
-    min-height: 82px;
-    border-bottom: 1px solid #2a2a2a;
-    background:
-      linear-gradient(135deg, rgba(240,192,0,0.22), rgba(104,167,255,0.06)),
-      radial-gradient(circle at 70% 34%, rgba(255,255,255,0.16), transparent 22%),
-      #151515;
-    overflow: hidden;
-  }
-
-  .tile-art::before,
-  .tile-art::after {
-    content: '';
-    position: absolute;
-    background: rgba(255,255,255,0.42);
-  }
-
-  .tile-art::before {
-    width: 58%;
-    height: 2px;
-    left: 22%;
-    top: 48%;
-    transform: rotate(-18deg);
-  }
-
-  .tile-art::after {
-    width: 42px;
-    height: 42px;
-    right: 18px;
-    top: 20px;
-    border: 3px solid rgba(240,192,0,0.9);
-    border-radius: 50%;
-    background: transparent;
-  }
-
-  .tile-art-sled::before,
-  .tile-art-pull::before {
-    width: 64%;
-    height: 12px;
-    left: 18%;
-    top: 56%;
-    transform: none;
-    border-radius: 20px;
-    background: rgba(240,192,0,0.82);
-  }
-
-  .tile-art-burpee::before,
-  .tile-art-lunge::before {
-    width: 72px;
-    height: 2px;
-    left: 22%;
-    top: 58%;
-    transform: rotate(24deg);
-  }
-
-  .tile-art-row::after,
-  .tile-art-ski::after {
-    width: 52px;
-    height: 52px;
-    border-width: 4px;
-  }
-
-  .tile-art-carry::before {
-    width: 58%;
-    height: 28px;
-    left: 23%;
-    top: 44%;
-    transform: none;
-    border: 2px solid rgba(240,192,0,0.9);
-    border-radius: 18px;
-    background: transparent;
-  }
-
-  .tile-art-wall::after {
-    width: 34px;
-    height: 34px;
-    right: 28px;
-    top: 12px;
-    background: var(--yellow);
-    border: 0;
-  }
-
-  .tile-main {
-    color: #fff;
-    font-size: 15px;
-    font-weight: 900;
-    line-height: 1.1;
-  }
-
-  .tile-body {
-    position: relative;
-    min-height: 64px;
-    padding: 13px 12px 12px 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-  }
-
-  .tile-meta {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-  }
-
-  .run-ladder {
-    display: grid;
-    grid-template-rows: auto repeat(8, 1fr) auto;
-    gap: 5px;
-    min-width: 58px;
-    background: #f5f5f5;
-    color: #111;
-    border-radius: 4px;
-    padding: 10px 8px;
-    text-align: center;
-  }
-
-  .ladder-cap {
-    font-size: 10px;
-    font-weight: 950;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  .ladder-run {
-    display: grid;
-    place-items: center;
-    border-top: 1px solid #d9d9d9;
-    font-size: 9px;
-    font-weight: 900;
-    line-height: 1.15;
-    text-transform: uppercase;
-  }
-
-  .ladder-run span {
-    display: grid;
-    place-items: center;
-    width: 21px;
-    height: 21px;
-    margin-top: 4px;
-    background: var(--yellow);
-    font-size: 10px;
-  }
-
   .station-list {
-    display: grid;
-    gap: 8px;
+    display: block;
+    align-self: start;
   }
 
-  .station-card {
-    display: grid;
-    grid-template-columns: 44px 1fr auto 18px;
-    gap: 14px;
+  .station-acc {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .station-acc:first-child {
+    border-top: 1px solid var(--line);
+  }
+
+  .station-acc summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
     align-items: center;
-    padding: 13px 14px;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 22px 6px;
+  }
+
+  .station-acc summary::-webkit-details-marker { display: none; }
+
+  .station-name {
+    color: #fff;
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 900;
+    text-transform: capitalize;
   }
 
   .station-chevron {
     color: #fff;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 20px;
     line-height: 1;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
   }
 
-  .station-index {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 6px;
-    background: #1f1a00;
-    color: var(--yellow);
-    font-weight: 950;
-  }
+  .station-acc[open] .station-chevron { transform: rotate(180deg); }
 
-  .station-name {
-    color: #fff;
-    font-size: 16px;
-    font-weight: 900;
-    margin-bottom: 4px;
-  }
-
-  .station-detail {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.35;
+  .station-body {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 0 6px 22px;
   }
 
   .station-measure {
     color: var(--yellow);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 950;
     white-space: nowrap;
-    text-align: right;
+  }
+
+  .station-detail {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.45;
   }
 
   .format-footnote {
@@ -681,13 +510,6 @@
     }
     .format-source { text-align: left; }
     .format-grid { grid-template-columns: 1fr; }
-    .competition-visual { grid-template-columns: 1fr; }
-    .run-ladder {
-      grid-template-columns: auto repeat(8, minmax(44px, 1fr)) auto;
-      grid-template-rows: none;
-      overflow-x: auto;
-    }
-    .ladder-run { border-top: 0; border-left: 1px solid #d9d9d9; min-height: 54px; }
     .format-footnote { grid-template-columns: 1fr; }
     .app-grid { grid-template-columns: 1fr; }
   }
@@ -697,32 +519,12 @@
     .hero-actions { display: grid; grid-template-columns: 1fr; }
     .primary-btn, .secondary-btn { width: 100%; }
     .quick-stats { grid-template-columns: 1fr; }
-    .competition-card { padding: 14px; }
     .format-title-pill {
       width: 100%;
       min-height: 50px;
       padding: 0 16px;
     }
-    .workout-grid { grid-template-columns: 1fr; }
-    .workout-tile { min-height: 126px; }
-    .tile-art { min-height: 68px; }
-    .station-card {
-      grid-template-columns: 36px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-    .station-index {
-      width: 32px;
-      height: 32px;
-      font-size: 13px;
-    }
-    .station-measure {
-      grid-column: 2;
-      text-align: left;
-      white-space: normal;
-      margin-top: -4px;
-    }
-    .station-chevron { display: none; }
+    .station-body { flex-direction: column; gap: 6px; }
     .feature-list { grid-template-columns: 1fr; }
     .links { grid-template-columns: 1fr; }
     section { padding: 42px 16px; }
@@ -758,6 +560,20 @@
 
       requestAnimationFrame(step);
       history.replaceState(null, '', '#choose-tracker');
+    });
+  });
+
+  // Only one station accordion open at a time.
+  document.addEventListener('DOMContentLoaded', function () {
+    var accs = document.querySelectorAll('.station-acc');
+    accs.forEach(function (acc) {
+      acc.addEventListener('toggle', function () {
+        if (acc.open) {
+          accs.forEach(function (other) {
+            if (other !== acc) other.open = false;
+          });
+        }
+      });
     });
   });
 </script>
@@ -797,110 +613,46 @@
       <p class="section-copy">Every HYROX race uses the same structure worldwide: run 1 km, complete the next workout station, then repeat until all 8 runs and 8 stations are finished. That fixed order makes it easy to train, compare splits, and know exactly what is coming next.</p>
       <div class="format-heading-row">
         <div class="format-title-pill">Race Format</div>
-        <div class="format-source">Based on the official HYROX race order</div>
+        <div class="format-source">Race format as of June 2026 · Based on the official HYROX race order</div>
       </div>
       <div class="format-grid" aria-label="HYROX race format">
         <div class="competition-card">
-          <div class="format-label">The competition</div>
-          <div class="competition-visual">
-            <div class="workout-grid" aria-label="Workout station order">
-              <div class="workout-tile">
-                <div class="tile-art tile-art-ski"><div class="tile-num">01</div></div>
-                <div class="tile-body"><div class="tile-main">SkiErg</div><div class="tile-meta">1000 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-sled"><div class="tile-num">02</div></div>
-                <div class="tile-body"><div class="tile-main">Sled Push</div><div class="tile-meta">50 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-pull"><div class="tile-num">03</div></div>
-                <div class="tile-body"><div class="tile-main">Sled Pull</div><div class="tile-meta">50 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-burpee"><div class="tile-num">04</div></div>
-                <div class="tile-body"><div class="tile-main">Burpee Broad Jumps</div><div class="tile-meta">80 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-row"><div class="tile-num">05</div></div>
-                <div class="tile-body"><div class="tile-main">Rowing</div><div class="tile-meta">1000 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-carry"><div class="tile-num">06</div></div>
-                <div class="tile-body"><div class="tile-main">Farmer's Carry</div><div class="tile-meta">200 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-lunge"><div class="tile-num">07</div></div>
-                <div class="tile-body"><div class="tile-main">Sandbag Lunges</div><div class="tile-meta">100 m</div></div>
-              </div>
-              <div class="workout-tile">
-                <div class="tile-art tile-art-wall"><div class="tile-num">08</div></div>
-                <div class="tile-body"><div class="tile-main">Wall Balls</div><div class="tile-meta">100 reps</div></div>
-              </div>
-            </div>
-            <div class="run-ladder" aria-label="One kilometer run before each station">
-              <div class="ladder-cap">Start</div>
-              <div class="ladder-run">1 km run <span>01</span></div>
-              <div class="ladder-run">1 km run <span>02</span></div>
-              <div class="ladder-run">1 km run <span>03</span></div>
-              <div class="ladder-run">1 km run <span>04</span></div>
-              <div class="ladder-run">1 km run <span>05</span></div>
-              <div class="ladder-run">1 km run <span>06</span></div>
-              <div class="ladder-run">1 km run <span>07</span></div>
-              <div class="ladder-run">1 km run <span>08</span></div>
-              <div class="ladder-cap">Finish</div>
-            </div>
-          </div>
+          <img class="competition-img" src="assets/race-format.png" alt="HYROX race format: 8 workout stations in order with a 1 km run before each, from SkiErg to Wall Balls." loading="lazy">
         </div>
 
         <div class="station-list" aria-label="Station details">
-          <div class="station-card">
-            <div class="station-index">01</div>
-            <div><div class="station-name">SkiErg</div><div class="station-detail">Controlled pulling power after the opening kilometer.</div></div>
-            <div class="station-measure">1000 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">02</div>
-            <div><div class="station-name">Sled Push</div><div class="station-detail">Heavy leg drive over a short, demanding lane.</div></div>
-            <div class="station-measure">50 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">03</div>
-            <div><div class="station-name">Sled Pull</div><div class="station-detail">Grip, posterior chain, and steady rope control.</div></div>
-            <div class="station-measure">50 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">04</div>
-            <div><div class="station-name">Burpee Broad Jumps</div><div class="station-detail">Full-body ground-to-forward movement under fatigue.</div></div>
-            <div class="station-measure">80 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">05</div>
-            <div><div class="station-name">Rowing</div><div class="station-detail">A second endurance machine after the halfway mark.</div></div>
-            <div class="station-measure">1000 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">06</div>
-            <div><div class="station-name">Farmer's Carry</div><div class="station-detail">Loaded carry for grip, posture, and breathing control.</div></div>
-            <div class="station-measure">200 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">07</div>
-            <div><div class="station-name">Sandbag Lunges</div><div class="station-detail">Leg durability and balance late in the race.</div></div>
-            <div class="station-measure">100 m</div>
-            <div class="station-chevron">⌄</div>
-          </div>
-          <div class="station-card">
-            <div class="station-index">08</div>
-            <div><div class="station-name">Wall Balls</div><div class="station-detail">The final station: squat, throw, repeat to the finish.</div></div>
-            <div class="station-measure">100 reps</div>
-            <div class="station-chevron">⌄</div>
-          </div>
+          <details class="station-acc">
+            <summary><span class="station-name">SkiErg</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">1000 m</span><span class="station-detail">Controlled pulling power after the opening kilometer.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Sled Push</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">50 m</span><span class="station-detail">Heavy leg drive over a short, demanding lane.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Sled Pull</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">50 m</span><span class="station-detail">Grip, posterior chain, and steady rope control.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Burpee Broad Jumps</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">80 m</span><span class="station-detail">Full-body ground-to-forward movement under fatigue.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Rowing</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">1000 m</span><span class="station-detail">A second endurance machine after the halfway mark.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Farmers Carry</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">200 m</span><span class="station-detail">Loaded carry for grip, posture, and breathing control.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Sandbag Lunges</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">100 m</span><span class="station-detail">Leg durability and balance late in the race.</span></div>
+          </details>
+          <details class="station-acc">
+            <summary><span class="station-name">Wall Balls</span><span class="station-chevron">⌄</span></summary>
+            <div class="station-body"><span class="station-measure">100 reps</span><span class="station-detail">The final station: squat, throw, repeat to the finish.</span></div>
+          </details>
         </div>
       </div>
       <div class="format-footnote" aria-label="Race format summary">
