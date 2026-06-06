@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>HYROX Custom Plan – Practice Checklist</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0d0d0d;
+  color: #e8e8e8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+  padding-bottom: 56px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: #000;
+  border-bottom: 3px solid #f0c000;
+  padding: 12px 16px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.title-sub {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f0c000;
+  margin-bottom: 3px;
+}
+
+.title-main {
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  line-height: 1;
+}
+
+.title-main em { color: #f0c000; font-style: normal; }
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
+.reset-label { display: none; }
+@media (min-width: 480px) { .reset-label { display: inline; } }
+
+.reset-btn {
+  background: #141414;
+  border: 1px solid #2e2e2e;
+  color: #666;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.reset-btn:active { border-color: #f0c000; color: #f0c000; }
+
+/* ── TIMER + PROGRESS ROW ── */
+.timer-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.progress-ring-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+  width: 44px;
+  height: 44px;
+}
+
+.progress-ring-bg {
+  fill: none;
+  stroke: #222;
+  stroke-width: 4;
+}
+
+.progress-ring-fill {
+  fill: none;
+  stroke: #f0c000;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .4s ease;
+}
+
+.progress-ring-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: #f0c000;
+  font-variant-numeric: tabular-nums;
+}
+
+.total-timer {
+  font-size: 28px;
+  font-weight: 900;
+  color: #f0c000;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.total-timer.inactive { color: #333; }
+
+/* ── MAIN ── */
+main {
+  padding: 14px 14px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 12px;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid #1f1f1f;
+}
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: #000;
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.sec-head.yellow { border-left: 3px solid #f0c000; }
+.sec-head.yellow .sec-name { color: #f0c000; }
+.sec-head.yellow .sec-badge { background: #1a1600; color: #f0c000; border: 1px solid #2e2500; }
+
+.sec-head.run { border-left: 3px solid #666; }
+.sec-head.run .sec-name { color: #bbb; }
+.sec-head.run .sec-badge { background: #1a1a1a; color: #888; border: 1px solid #2a2a2a; }
+
+.sec-head.station { border-left: 3px solid #444; }
+.sec-head.station .sec-name { color: #e8e8e8; }
+.sec-head.station .sec-badge { background: #161616; color: #777; border: 1px solid #252525; }
+
+.sec-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.sec-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* ── SECTION TIMER ── */
+.sec-timer {
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  color: #333;
+  min-width: 52px;
+  text-align: right;
+}
+
+.sec-timer.running { color: #f0c000; }
+.sec-timer.done-t { color: #555; }
+
+/* ── ITEMS ── */
+.items { background: #111; }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.row:first-child { border-top: none; }
+
+/* ── CHECKBOX ── */
+.box {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  background: #0d0d0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s, border-color .15s;
+}
+
+.row.done .box { background: #f0c000; border-color: #f0c000; }
+
+/* locked = not yet reachable */
+.row.locked .box {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: #222;
+}
+
+.row-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #d0d0d0;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.row.done .row-text { text-decoration: line-through; color: #444; }
+.row.locked .row-text { opacity: 0.3; }
+
+.row-detail {
+  font-size: 11px;
+  color: #555;
+  font-weight: 500;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+.row.done .row-detail { color: #333; }
+.row.locked .row-detail { opacity: 0.3; }
+
+/* ── SELECT ALL ROW ── */
+.row-all {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border-bottom: 1px solid #1f1f1f;
+  background: #0a0a0a;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row-all .box-all {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  background: #0d0d0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s, border-color .15s;
+}
+
+.row-all.all-done .box-all { background: #f0c000; border-color: #f0c000; }
+.run-all.all-done .box-all { background: #555; border-color: #555; }
+
+.row-all .all-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #444;
+  flex: 1;
+}
+
+.row-all.all-done .all-label { color: #333; }
+
+/* ── START BUTTON ── */
+.start-wrap {
+  max-width: 600px;
+  margin: 10px auto 0;
+  padding: 0 14px;
+}
+
+.start-btn {
+  width: 100%;
+  background: #f0c000;
+  border: none;
+  color: #000;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 15px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+
+.start-btn:hover { background: #ffd700; }
+.start-btn:active { transform: scale(0.98); }
+
+.start-wrap.hidden { display: none; }
+
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.visible { display: flex; }
+
+.modal-box {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #f0c000;
+  border-radius: 10px;
+  padding: 28px 24px 22px;
+  max-width: 320px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.modal-sub {
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-cancel {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  color: #666;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.modal-cancel:hover { border-color: #444; color: #aaa; }
+
+.modal-confirm {
+  flex: 1;
+  background: #f0c000;
+  border: none;
+  color: #000;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.modal-confirm:hover { background: #ffd700; }
+
+/* ── INFO CARDS ── */
+.info-cards {
+  padding: 14px 14px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.info-card {
+  margin-bottom: 10px;
+  border-radius: 7px;
+  border: 1px solid #1f1f1f;
+  overflow: hidden;
+}
+
+.info-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: #000;
+  border-bottom: 1px solid #1a1a1a;
+  border-left: 3px solid #f0c000;
+}
+
+.info-card-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #f0c000;
+}
+
+.info-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: #1a1600;
+  color: #f0c000;
+  border: 1px solid #2e2500;
+}
+
+.info-card-body {
+  background: #111;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.info-item {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-item::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #3a3000;
+  flex-shrink: 0;
+}
+
+/* ── SUMMARY CARD ── */
+.summary-wrap {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 14px 14px 40px;
+  display: none;
+}
+
+.summary-wrap.visible { display: block; }
+
+.summary {
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 540px);
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+}
+
+.summary-header {
+  background: #000;
+  border-bottom: 2px solid #f0c000;
+  padding: 22px 22px 18px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.summary-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f0c000;
+  margin-bottom: 6px;
+}
+
+.summary-total {
+  font-size: 44px;
+  font-weight: 900;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.summary-date {
+  font-size: 11px;
+  color: #444;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.summary-stats {
+  display: flex;
+  border-bottom: 1px solid #1a1a1a;
+  flex: 0 0 auto;
+}
+
+.summary-stat {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 8px 12px;
+  text-align: center;
+  border-right: 1px solid #1a1a1a;
+}
+
+.summary-stat:last-child { border-right: none; }
+
+.summary-stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+
+.summary-stat-value {
+  font-size: 17px;
+  font-weight: 900;
+  color: #f0c000;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+  table-layout: fixed;
+  min-height: 0;
+}
+
+.summary-table tr { border-bottom: 1px solid #141414; }
+.summary-table tr:last-child { border-bottom: none; }
+
+.summary-table td {
+  padding: 0 12px;
+  height: 38px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  vertical-align: middle;
+  line-height: 1.12;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary-table td:first-child {
+  font-weight: 700;
+  color: #bbb;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  width: 52%;
+}
+
+.summary-table td:nth-child(2) {
+  text-align: right;
+  color: #666;
+  font-size: 10px;
+  font-weight: 600;
+  width: 19%;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.summary-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: #d0d0d0;
+  font-size: 13px;
+  width: 29%;
+  letter-spacing: 0;
+}
+
+.summary-table tr.run-row td:first-child { color: #777; }
+.summary-table tr.run-row td:last-child { color: #888; }
+
+.summary-table tr.station-row td:first-child { color: #ccc; }
+.summary-table tr.station-row td:last-child { color: #f0c000; }
+
+.summary-table tr.slowest td { background: rgba(255,60,60,0.06); }
+.summary-table tr.slowest td:last-child { color: #ff6b6b; }
+
+.summary-table tr.fastest td { background: rgba(80,220,120,0.06); }
+.summary-table tr.fastest td:last-child { color: #50dc78; }
+
+.summary-badge {
+  display: inline-block;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.badge-slow { background: rgba(255,60,60,0.15); color: #ff6b6b; }
+.badge-fast { background: rgba(80,220,120,0.15); color: #50dc78; }
+
+.summary-footer {
+  padding: 13px 18px;
+  border-top: 1px solid #1a1a1a;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 0 auto;
+}
+
+.summary.summary-export {
+  width: 540px;
+  height: 960px;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+@media (max-width: 420px) {
+  .summary-total { font-size: 36px; }
+  .summary-stat-label { font-size: 8px; letter-spacing: 0.7px; }
+  .summary-stat-value { font-size: 14px; }
+  .summary-table td { padding-left: 8px; padding-right: 8px; }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .header { position: static; background: #fff; border-bottom: 2px solid #000; }
+  .title-sub { color: #000; }
+  .title-main { color: #000; }
+  .title-main em { color: #000; }
+  .reset-btn { display: none; }
+  .pct { color: #000; }
+  .bar-wrap { background: #ddd; }
+  .bar-fill { background: #000; }
+  .section { border: 1px solid #ccc; break-inside: avoid; }
+  .sec-head { background: #f5f5f5 !important; border-left: 3px solid #000 !important; border-bottom: 1px solid #ddd !important; }
+  .sec-name { color: #000 !important; }
+  .sec-badge { display: none; }
+  .items { background: #fff; }
+  .row { border-top: 1px solid #eee; }
+  .box { border-color: #aaa; background: #fff; }
+  .row.done .box { background: #000; border-color: #000; }
+  .row-text { color: #000; }
+  .row.done .row-text { color: #aaa; }
+}
+</style>
+<script src="vendor/html2canvas.min.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+  // Remember this tracker so a cold app launch reopens it
+  try { localStorage.setItem('hyrox_last_page', location.pathname.split('/').pop()); } catch(e) {}
+</script>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div style="display:flex; align-items:center; gap: 10px;">
+      <a href="index.html?home=1" style="text-decoration:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; background:#141414; border:1px solid #2e2e2e; transition:all 0.15s ease;" onmouseover="this.style.borderColor='#f0c000'" onmouseout="this.style.borderColor='#2e2e2e'" aria-label="Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0c000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </a>
+      <a href="hyrox-custom.html" style="text-decoration:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; background:#141414; border:1px solid #2e2e2e; transition:all 0.15s ease;" onmouseover="this.style.borderColor='#f0c000'" onmouseout="this.style.borderColor='#2e2e2e'" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0c000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+      <div style="margin-left: 4px;">
+      <span class="title-sub">Practice Run</span>
+      <div class="title-main" id="dynamicTitle">HYROX <em>Custom</em></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="reset-btn" id="resetBtn">&#8635;<span class="reset-label"> Reset</span></button>
+    </div>
+  </div>
+  <div class="timer-progress-row">
+    <div class="progress-ring-wrap">
+      <svg class="progress-ring" viewBox="0 0 44 44">
+        <circle class="progress-ring-bg" cx="22" cy="22" r="18"/>
+        <circle class="progress-ring-fill" id="ringFill" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="113.1"/>
+      </svg>
+      <div class="progress-ring-pct" id="pctLabel">0%</div>
+    </div>
+    <div class="total-timer inactive" id="totalTimer">00:00:00.00</div>
+  </div>
+</div>
+
+<!-- Pre-race prep modal -->
+<div class="modal-overlay" id="prepModal">
+  <div class="modal-box" style="max-width:400px;text-align:left;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div class="modal-title" style="margin:0;">Pre-Race Checklist</div>
+      <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f0c000;background:#1a1600;border:1px solid #2e2500;padding:2px 8px;border-radius:3px;">Pre-Race</span>
+    </div>
+    <div style="margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#555;">Before Starting</div>
+    <ul style="list-style:none;margin-bottom:16px;">
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Running shoes tested</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Water and electrolytes ready</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Partner assigned station responsibilities</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;">&#10003; Race pace agreed upon</li>
+    </ul>
+    <div style="margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#555;">Warm Up</div>
+    <ul style="list-style:none;margin-bottom:22px;">
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; 5 min easy jog</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Leg swings &mdash; forward and lateral</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Walking lunges &times; 10</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a;">&#10003; Arm circles &mdash; forward and back</li>
+      <li style="padding:5px 0;font-size:13px;color:#888;">&#10003; 3 &times; 50m strides</li>
+    </ul>
+    <button class="modal-confirm" id="prepDone" style="width:100%;">Ready &mdash; Let&rsquo;s Go</button>
+  </div>
+</div>
+
+<!-- Reset confirmation modal -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠︎</div>
+    <div class="modal-title">Reset Everything?</div>
+    <div class="modal-sub">All checkboxes and timers will be cleared. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Reset</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="start-wrap" id="startWrap">
+  <button class="start-btn" id="startBtn">▶ Start Race</button>
+</div>
+
+<main id="app"></main>
+<div class="summary-wrap" id="summaryWrap"></div>
+
+<script>
+const INFO_CARDS = [
+  { id:'before', name:'Before Starting', badge:'Pre-Race', items:[
+    'Gear tested',
+    'Water and electrolytes ready',
+    'Plan reviewed'
+  ]},
+  { id:'warmup', name:'Warm Up', badge:'Activation', items:[
+    '5 min easy jog',
+    'Leg swings — forward and lateral',
+    'Walking lunges × 10',
+    'Arm circles',
+    '3 × 50m strides'
+  ]},
+];
+
+// Load plan from URL
+const urlParams = new URLSearchParams(window.location.search);
+const planId = urlParams.get('id');
+const plans = JSON.parse(localStorage.getItem('hyrox_custom_plans')) || [];
+const plan = plans.find(p => p.id === planId);
+
+if (!plan) {
+  alert('Plan not found!');
+  window.location.href = 'hyrox-custom.html';
+}
+
+document.getElementById('dynamicTitle').innerHTML = `HYROX <em>${plan.name}</em>`;
+
+// Map custom plan sequence to SECTIONS array
+const SECTIONS = plan.sequence.map((item, idx) => ({
+  id: item.seqId,
+  type: item.type,
+  name: `Item ${idx+1} — ${item.name}`,
+  badge: item.badge,
+  item: `${item.name} completed`,
+  detail: item.detail
+}));
+
+const KEY = 'hyrox_custom_tracker_' + planId;
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
+
+// ── TIMER STATE ──
+// state.timers[id] = { start: epochMs, elapsed: seconds, done: bool }
+// state.totalStart = epochMs
+// state.totalElapsed = seconds
+// state.totalDone = bool
+
+if (!state.timers) state.timers = {};
+
+if (state.totalStart && !state.raceStarted && !state.totalDone && !SECTIONS.some(sec => state[sec.id])) {
+  state = { timers: {} };
+  save();
+}
+
+function hasRaceStarted() {
+  return !!(state.raceStarted || state.totalStart || state.totalDone);
+}
+
+let tickInterval = null;
+const sectionTimerEls = {}; // id -> DOM element
+
+const CHECK_DARK  = `<svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CHECK_LIGHT = `<svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+function fmt(s) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = Math.floor(s % 60);
+  const ms = Math.floor((s % 1) * 100);
+  const msStr = String(ms).padStart(2,'0');
+  if (h > 0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+msStr;
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+msStr;
+}
+
+function fmtTotal(s) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = Math.floor(s % 60);
+  const ms = Math.floor((s % 1) * 100);
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+String(ms).padStart(2,'0');
+}
+
+function isSectionComplete(sec) {
+  return !!state[sec.id];
+}
+
+function getElapsed(t) {
+  if (!t || !t.start) return t ? (t.elapsed || 0) : 0;
+  return (t.elapsed || 0) + (Date.now() - t.start) / 1000;
+}
+
+function tick() {
+  const now = Date.now();
+
+  // update total timer
+  const totalEl = document.getElementById('totalTimer');
+  if (state.totalStart && !state.totalDone) {
+    const elapsed = (state.totalElapsed || 0) + (now - state.totalStart) / 1000;
+    totalEl.textContent = fmtTotal(elapsed);
+    totalEl.classList.remove('inactive');
+  } else if (state.totalDone) {
+    const elapsed = state.totalElapsed || 0;
+    totalEl.textContent = fmtTotal(elapsed);
+    totalEl.classList.remove('inactive');
+  }
+
+  // update section timers
+  SECTIONS.forEach(sec => {
+    const el = sectionTimerEls[sec.id];
+    if (!el) return;
+    const t = state.timers[sec.id];
+    if (!t) return;
+    if (t.start && !t.done) {
+      const elapsed = (t.elapsed || 0) + (now - t.start) / 1000;
+      el.textContent = fmt(elapsed);
+      el.className = 'sec-timer running';
+    } else if (t.done) {
+      el.textContent = fmt(t.elapsed || 0);
+      el.className = 'sec-timer done-t';
+    }
+  });
+}
+
+function startTimer(id) {
+  if (!state.timers[id]) state.timers[id] = {};
+  const t = state.timers[id];
+  if (t.start || t.done) return; // already running or done
+  t.start = Date.now();
+  save();
+}
+
+function stopTimer(id) {
+  const t = state.timers[id];
+  if (!t || t.done) return;
+  if (t.start) {
+    t.elapsed = (t.elapsed || 0) + (Date.now() - t.start) / 1000;
+    t.start = null;
+  }
+  t.done = true;
+  save();
+}
+
+function startTotalTimer() {
+  if (state.totalStart || state.totalDone) return;
+  state.totalStart = Date.now();
+  const el = document.getElementById('totalTimer');
+  el.classList.remove('inactive');
+  save();
+}
+
+function stopTotalTimer() {
+  if (state.totalDone) return;
+  if (state.totalStart) {
+    state.totalElapsed = (state.totalElapsed || 0) + (Date.now() - state.totalStart) / 1000;
+    state.totalStart = null;
+  }
+  state.totalDone = true;
+  save();
+}
+
+// Called whenever any checkbox changes — figures out what to start/stop
+function evaluateTimers() {
+  if (!hasRaceStarted()) return;
+
+  let prevComplete = true; // sections before index 0 are "done"
+
+  for (let idx = 0; idx < SECTIONS.length; idx++) {
+    const sec = SECTIONS[idx];
+    const complete = isSectionComplete(sec);
+    const t = state.timers[sec.id];
+
+    // Start this section's timer if previous section just finished and this one hasn't started
+    if (prevComplete && !complete) {
+      if (!t || (!t.start && !t.done)) {
+        startTimer(sec.id);
+        // Also start total if not started
+        if (!state.totalStart && !state.totalDone) startTotalTimer();
+      }
+    }
+
+    // Stop this section's timer if it just became complete
+    if (complete && t && t.start && !t.done) {
+      stopTimer(sec.id);
+      // Start next section's timer
+      if (idx + 1 < SECTIONS.length) {
+        startTimer(SECTIONS[idx + 1].id);
+        if (!state.totalStart && !state.totalDone) startTotalTimer();
+      } else {
+        // Last section done — stop total
+        stopTotalTimer();
+      }
+    }
+
+    prevComplete = complete;
+  }
+
+  // Edge: if the very first checkbox is checked, start total + first section
+  if (!state.totalStart && !state.totalDone) {
+    const anyChecked = SECTIONS.some(s => state[s.id]);
+    if (anyChecked) startTotalTimer();
+  }
+}
+
+function updateProgress() {
+  const done = SECTIONS.filter(s => state[s.id]).length;
+  const total = SECTIONS.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('pctLabel').textContent = pct + '%';
+  const circumference = 2 * Math.PI * 18; // r=18
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+}
+
+function toggle(rowEl, box, sec) {
+  if (rowEl.classList.contains('locked')) return;
+  if (state[sec.id]) return;
+  state[sec.id] = true;
+  save();
+  rowEl.classList.add('done');
+  box.innerHTML = CHECK_DARK;
+  evaluateTimers();
+  updateProgress();
+  refreshLockStates();
+  buildSummary();
+}
+
+
+function buildInfoCards() {
+  const container = document.getElementById('infoCards');
+  container.innerHTML = '';
+  INFO_CARDS.forEach(card => {
+    const wrap = document.createElement('div');
+    wrap.className = 'info-card';
+    const head = document.createElement('div');
+    head.className = 'info-card-head';
+    head.innerHTML = `<span class="info-card-name">${card.name}</span><span class="info-card-badge">${card.badge}</span>`;
+    const body = document.createElement('div');
+    body.className = 'info-card-body';
+    card.items.forEach(text => {
+      const item = document.createElement('div');
+      item.className = 'info-item';
+      item.textContent = text;
+      body.appendChild(item);
+    });
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    container.appendChild(wrap);
+  });
+}
+
+function buildUI() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  SECTIONS.forEach(sec => {
+    const isRun = sec.type === 'run';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'section';
+
+    const head = document.createElement('div');
+    head.className = 'sec-head ' + sec.type;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'sec-name';
+    nameEl.textContent = sec.name;
+
+    const badgeEl = document.createElement('span');
+    badgeEl.className = 'sec-badge';
+    badgeEl.textContent = sec.badge;
+
+    const timerEl = document.createElement('span');
+    timerEl.className = 'sec-timer';
+    timerEl.textContent = '--:--.--';
+    sectionTimerEls[sec.id] = timerEl;
+
+    // Restore timer display on load
+    const t = state.timers[sec.id];
+    if (t) {
+      if (t.done) {
+        timerEl.textContent = fmt(t.elapsed || 0);
+        timerEl.className = 'sec-timer done-t';
+      } else if (t.start) {
+        timerEl.className = 'sec-timer running';
+      }
+    }
+
+    head.appendChild(nameEl);
+    head.appendChild(badgeEl);
+    head.appendChild(timerEl);
+    wrap.appendChild(head);
+
+    const list = document.createElement('div');
+    list.className = 'items' + (isRun ? ' run-items' : '');
+
+    const isDone = !!state[sec.id];
+    const row = document.createElement('div');
+    row.id = 'row_' + sec.id;
+    row.className = 'row' + (isDone ? ' done' : '');
+
+    const box = document.createElement('div');
+    box.className = 'box';
+    if (isDone) box.innerHTML = CHECK_DARK;
+
+    const lbl = document.createElement('div');
+    lbl.className = 'row-text';
+    lbl.textContent = sec.item;
+
+    if (sec.detail) {
+      const det = document.createElement('div');
+      det.className = 'row-detail';
+      det.textContent = sec.detail;
+      lbl.appendChild(det);
+    }
+
+    row.appendChild(box);
+    row.appendChild(lbl);
+
+    box.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggle(row, box, sec);
+    });
+
+    let ty = 0;
+    box.addEventListener('touchstart', function(e) { ty = e.touches[0].clientY; }, { passive: true });
+    box.addEventListener('touchend', function(e) {
+      if (Math.abs(e.changedTouches[0].clientY - ty) < 8) {
+        e.preventDefault();
+        toggle(row, box, sec);
+      }
+    }, { passive: false });
+
+    list.appendChild(row);
+    wrap.appendChild(list);
+    app.appendChild(wrap);
+  });
+
+  // Restore total timer display
+  const totalEl = document.getElementById('totalTimer');
+  if (state.totalDone || state.totalStart) {
+    totalEl.classList.remove('inactive');
+    if (state.totalDone) totalEl.textContent = fmtTotal(state.totalElapsed || 0);
+  }
+
+  updateProgress();
+  buildSummary();
+}
+
+function buildSummary() {
+  const wrap = document.getElementById('summaryWrap');
+  const allDone = SECTIONS.every(s => state[s.id]);
+  if (!allDone || !state.totalDone) {
+    wrap.classList.remove('visible');
+    wrap.innerHTML = '';
+    return;
+  }
+
+  const totalTime = state.totalElapsed || 0;
+  let runTotal = 0, stationTotal = 0;
+  let slowestStation = null, fastestStation = null;
+  let slowestTime = 0, fastestTime = Infinity;
+
+  SECTIONS.forEach(sec => {
+    const t = state.timers[sec.id];
+    const elapsed = t ? (t.elapsed || 0) : 0;
+    if (sec.type === 'run') runTotal += elapsed;
+    else {
+      stationTotal += elapsed;
+      if (elapsed > slowestTime) { slowestTime = elapsed; slowestStation = sec.id; }
+      if (elapsed < fastestTime) { fastestTime = elapsed; fastestStation = sec.id; }
+    }
+  });
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  let rows = '';
+  SECTIONS.forEach(sec => {
+    const t = state.timers[sec.id];
+    const elapsed = t ? (t.elapsed || 0) : 0;
+    const isRun = sec.type === 'run';
+    const summaryName = sec.name.replace(/^Station \d+ — /, '');
+    let cls = isRun ? 'run-row' : 'station-row';
+    let badge = '';
+    if (!isRun && sec.id === slowestStation) { cls += ' slowest'; badge = '<span class="summary-badge badge-slow">Slowest</span>'; }
+    if (!isRun && sec.id === fastestStation) { cls += ' fastest'; badge = '<span class="summary-badge badge-fast">Fastest</span>'; }
+    rows += `<tr class="${cls}"><td>${summaryName}${badge}</td><td>${sec.badge}</td><td>${fmtTotal(elapsed)}</td></tr>`;
+  });
+
+  wrap.innerHTML = `
+    <div class="summary">
+      <div class="summary-header">
+        <div class="summary-title">Training Complete</div>
+        <div class="summary-total">${fmtTotal(totalTime)}</div>
+        <div class="summary-date">${dateStr}</div>
+      </div>
+      <div class="summary-stats">
+        <div class="summary-stat">
+          <div class="summary-stat-label">Total Runs</div>
+          <div class="summary-stat-value">${fmtTotal(runTotal)}</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Total Stations</div>
+          <div class="summary-stat-value">${fmtTotal(stationTotal)}</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Avg / km</div>
+          <div class="summary-stat-value">${fmt(runTotal / 8)}</div>
+        </div>
+      </div>
+      <table class="summary-table">
+        ${rows}
+      </table>
+      <div class="summary-footer">HYROX Custom Plan · Practice Run</div>
+    </div>
+    <div style="text-align:center; margin-top: 16px;">
+      <button id="savePhotoBtn" style="background:#f0c000; color:#000; border:none; padding:12px 24px; border-radius:8px; font-weight:800; text-transform:uppercase; letter-spacing:1px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:8px; transition:transform 0.1s ease;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Save as Photo
+      </button>
+    </div>
+  `;
+  wrap.classList.add('visible');
+  
+  document.getElementById('savePhotoBtn').addEventListener('click', function() {
+    const btn = this;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "Saving...";
+    btn.disabled = true;
+    
+    setTimeout(() => {
+      const source = document.querySelector('.summary');
+      const exportNode = source.cloneNode(true);
+      exportNode.classList.add('summary-export');
+      exportNode.style.position = 'fixed';
+      exportNode.style.left = '-9999px';
+      exportNode.style.top = '0';
+      document.body.appendChild(exportNode);
+
+      html2canvas(exportNode, {
+        backgroundColor: '#0a0a0a',
+        scale: 2,
+        width: 540,
+        height: 960,
+        windowWidth: 540,
+        windowHeight: 960
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'hyrox-summary.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        exportNode.remove();
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }).catch(() => {
+        exportNode.remove();
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      });
+    }, 100);
+  });
+}
+
+const resetModal = document.getElementById('resetModal');
+const modalCancel = document.getElementById('modalCancel');
+const modalConfirm = document.getElementById('modalConfirm');
+
+document.getElementById('resetBtn').addEventListener('click', function() {
+  resetModal.classList.add('visible');
+});
+
+modalCancel.addEventListener('click', function() {
+  resetModal.classList.remove('visible');
+});
+
+resetModal.addEventListener('click', function(e) {
+  if (e.target === resetModal) resetModal.classList.remove('visible');
+});
+
+modalConfirm.addEventListener('click', function() {
+  resetModal.classList.remove('visible');
+  state = { timers: {} };
+  save();
+  const totalEl = document.getElementById('totalTimer');
+  totalEl.textContent = '00:00:00.00';
+  totalEl.classList.add('inactive');
+  startWrap.classList.remove('hidden');
+  buildUI();
+  refreshLockStates();
+  buildSummary();
+  prepModal.classList.add('visible');
+});
+
+buildUI();
+
+// A section row is locked if the race hasn't started OR a prior section isn't done
+function refreshLockStates() {
+  const raceStarted = hasRaceStarted();
+  SECTIONS.forEach((sec, idx) => {
+    const rowEl = document.getElementById('row_' + sec.id);
+    if (!rowEl) return;
+    const prevDone = idx === 0 ? raceStarted : (raceStarted && isSectionComplete(SECTIONS[idx - 1]));
+    const thisDone = isSectionComplete(sec);
+    rowEl.classList.toggle('locked', !thisDone && !prevDone);
+  });
+}
+
+// Wire Start Now button
+const startWrap = document.getElementById('startWrap');
+const startBtn  = document.getElementById('startBtn');
+
+function hideStartBtn() { startWrap.classList.add('hidden'); }
+
+// Hide if race already in progress
+if (hasRaceStarted()) hideStartBtn();
+
+startBtn.addEventListener('click', function() {
+  if (hasRaceStarted()) return;
+  state.raceStarted = true;
+  startTotalTimer();
+  startTimer('run1');
+  hideStartBtn();
+  save();
+  refreshLockStates();
+});
+
+// ── PREP MODAL ──
+const prepModal = document.getElementById('prepModal');
+document.getElementById('prepDone').addEventListener('click', function() {
+  prepModal.classList.remove('visible');
+});
+
+// Show prep modal on first load if race not yet started
+if (!hasRaceStarted()) {
+  prepModal.classList.add('visible');
+}
+
+// Resume only explicitly started races; first load must stay idle until Start Race.
+if (hasRaceStarted()) evaluateTimers();
+refreshLockStates();
+
+// Start global tick
+tickInterval = setInterval(tick, 30);
+</script>
+</body>
+</html>

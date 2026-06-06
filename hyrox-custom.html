@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Custom HYROX Plans</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0d0d; --panel: #141414; --panel-soft: #191919;
+    --line: #292929; --text: #f4f4f4; --muted: #a4a4a4;
+    --dim: #696969; --yellow: #f0c000; --green: #40d17d;
+  }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; padding: 20px;
+    max-width: 600px; margin: 0 auto;
+  }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--line);
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 8px; background: #141414;
+    border: 1px solid #2e2e2e; color: var(--yellow); text-decoration: none;
+  }
+  h1 { font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .btn {
+    display: block; width: 100%; text-align: center;
+    background: var(--yellow); color: #000; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 1px; padding: 14px;
+    border-radius: 8px; text-decoration: none; border: none; cursor: pointer;
+  }
+  .btn-outline {
+    background: transparent; border: 1px solid var(--yellow); color: var(--yellow);
+  }
+  
+  .plan-card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 8px; padding: 16px; margin-bottom: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .plan-title { font-size: 18px; font-weight: 900; color: #fff; }
+  .plan-desc { font-size: 13px; color: var(--muted); }
+  .plan-actions { display: flex; gap: 10px; margin-top: 5px; }
+  .plan-actions button, .plan-actions a {
+    flex: 1; text-align: center; font-size: 12px; padding: 10px;
+    border-radius: 6px; font-weight: 700; text-transform: uppercase;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn-run { background: var(--yellow); color: #000; border: none; }
+  .btn-edit { background: transparent; color: var(--yellow); border: 1px solid var(--yellow); }
+  .btn-del { background: #2a1010; color: #ff6b6b; border: 1px solid #4a1c1c; }
+
+  /* Builder Screen */
+  #builder { display: none; }
+  .builder-active #builder { display: block; }
+  .builder-active #list-view { display: none; }
+  
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  input[type="text"] {
+    width: 100%; background: #1a1a1a; border: 1px solid var(--line);
+    color: #fff; padding: 12px; border-radius: 6px; font-size: 16px;
+  }
+  
+  .exercise-list {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+  }
+  .exercise-item {
+    background: #1c1c1c; border: 1px solid #363636; border-radius: 6px;
+    padding: 12px; font-size: 13px; font-weight: 700; color: #e8e8e8;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .exercise-item:hover { border-color: var(--yellow); }
+  
+  .sequence-list {
+    background: #000; border: 1px solid var(--line); border-radius: 8px;
+    min-height: 100px; padding: 10px; margin-bottom: 20px;
+  }
+  .seq-item {
+    background: #141414; border: 1px solid #2e2e2e; border-radius: 6px;
+    padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between;
+    align-items: center; font-size: 14px; color: #fff;
+  }
+  .seq-item:last-child { margin-bottom: 0; }
+  .seq-item .remove {
+    color: #ff6b6b; font-size: 18px; cursor: pointer; font-weight: 900;
+  }
+  
+  .empty-msg { text-align: center; color: var(--dim); font-size: 14px; padding: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html?home=1" class="back-btn" aria-label="Home">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+  </a>
+  <h1>Custom Plans</h1>
+  <div style="width:36px;"></div>
+</div>
+
+<div id="list-view">
+  <div id="plans-container"></div>
+  <button class="btn" onclick="openBuilder()">+ Create New Plan</button>
+</div>
+
+<div id="builder">
+  <div class="form-group">
+    <label>Plan Name</label>
+    <input type="text" id="planName" placeholder="e.g. Ski/Row Focus">
+  </div>
+  
+  <label>Add Exercise to Sequence</label>
+  <div class="exercise-list" id="exercises-pool"></div>
+  
+  <label>Your Sequence</label>
+  <div class="sequence-list" id="sequence">
+    <div class="empty-msg">Tap exercises above to add them here</div>
+  </div>
+  
+  <div style="display:flex; gap:10px;">
+    <button class="btn btn-outline" onclick="closeBuilder()">Cancel</button>
+    <button class="btn" onclick="savePlan()">Save Plan</button>
+  </div>
+</div>
+
+<script>
+const AVAILABLE_EXERCISES = [
+  { id: 'run', name: '1 km Run', badge: '1 km', type: 'run', detail: 'Solo run' },
+  { id: 'ski', name: 'SkiErg', badge: '1000 m', type: 'station', detail: '1000 m SkiErg' },
+  { id: 'push', name: 'Sled Push', badge: '50 m', type: 'station', detail: 'Sled Push' },
+  { id: 'pull', name: 'Sled Pull', badge: '50 m', type: 'station', detail: 'Sled Pull' },
+  { id: 'bbj', name: 'Burpee Broad Jumps', badge: '80 m', type: 'station', detail: '80 m Jumps' },
+  { id: 'row', name: 'Rowing', badge: '1000 m', type: 'station', detail: '1000 m Row' },
+  { id: 'farm', name: 'Farmers Carry', badge: '200 m', type: 'station', detail: '200 m Carry' },
+  { id: 'lunge', name: 'Sandbag Lunges', badge: '100 m', type: 'station', detail: '100 m Lunges' },
+  { id: 'wall', name: 'Wall Balls', badge: '100 reps', type: 'station', detail: '100 reps' }
+];
+
+let plans = JSON.parse(localStorage.getItem('hyrox_custom_plans')) || [];
+let currentSequence = [];
+let editingPlanId = null;
+
+function init() {
+  renderPlans();
+  renderExercisePool();
+}
+
+function renderPlans() {
+  const container = document.getElementById('plans-container');
+  if (plans.length === 0) {
+    container.innerHTML = '<div class="empty-msg" style="margin-bottom:30px;">No custom plans yet. Create one to get started!</div>';
+    return;
+  }
+  
+  container.innerHTML = plans.map((plan, idx) => `
+    <div class="plan-card">
+      <div class="plan-title">${plan.name}</div>
+      <div class="plan-desc">${plan.sequence.length} sections (${plan.sequence.map(s => s.name).slice(0,3).join(', ')}${plan.sequence.length>3?'...':''})</div>
+      <div class="plan-actions">
+        <a class="btn-run" href="hyrox-custom-tracker.html?id=${plan.id}">▶ Start</a>
+        <button class="btn-edit" onclick="editPlan(${idx})">Edit</button>
+        <button class="btn-del" onclick="deletePlan(${idx})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deletePlan(idx) {
+  if (confirm('Delete this plan?')) {
+    plans.splice(idx, 1);
+    localStorage.setItem('hyrox_custom_plans', JSON.stringify(plans));
+    renderPlans();
+  }
+}
+
+function editPlan(idx) {
+  const plan = plans[idx];
+  editingPlanId = plan.id;
+  document.getElementById('planName').value = plan.name;
+  currentSequence = JSON.parse(JSON.stringify(plan.sequence));
+  document.body.classList.add('builder-active');
+  renderSequence();
+}
+
+function renderExercisePool() {
+  const pool = document.getElementById('exercises-pool');
+  pool.innerHTML = AVAILABLE_EXERCISES.map((ex, idx) => `
+    <div class="exercise-item" onclick="addExercise(${idx})">
+      + ${ex.name}
+    </div>
+  `).join('');
+}
+
+function addExercise(idx) {
+  const ex = AVAILABLE_EXERCISES[idx];
+  // Clone the exercise so we can modify its ID in the sequence to be unique
+  currentSequence.push({
+    ...ex,
+    seqId: 'c_' + Date.now() + '_' + Math.floor(Math.random()*1000)
+  });
+  renderSequence();
+}
+
+function removeExercise(seqIdx) {
+  currentSequence.splice(seqIdx, 1);
+  renderSequence();
+}
+
+function renderSequence() {
+  const seq = document.getElementById('sequence');
+  if (currentSequence.length === 0) {
+    seq.innerHTML = '<div class="empty-msg">Tap exercises above to add them here</div>';
+    return;
+  }
+  
+  seq.innerHTML = currentSequence.map((item, idx) => `
+    <div class="seq-item">
+      <span><span style="color:#f0c000; font-size:11px; margin-right:8px;">${idx+1}.</span> ${item.name}</span>
+      <span class="remove" onclick="removeExercise(${idx})">&times;</span>
+    </div>
+  `).join('');
+}
+
+function openBuilder() {
+  document.body.classList.add('builder-active');
+  document.getElementById('planName').value = '';
+  currentSequence = [];
+  editingPlanId = null;
+  renderSequence();
+}
+
+function closeBuilder() {
+  document.body.classList.remove('builder-active');
+}
+
+function savePlan() {
+  const name = document.getElementById('planName').value.trim();
+  if (!name) return alert('Please enter a plan name.');
+  if (currentSequence.length === 0) return alert('Please add at least one exercise.');
+  
+  if (editingPlanId) {
+    const plan = plans.find(p => p.id === editingPlanId);
+    if (plan) {
+      plan.name = name;
+      plan.sequence = currentSequence;
+    }
+  } else {
+    const plan = {
+      id: 'plan_' + Date.now(),
+      name: name,
+      sequence: currentSequence
+    };
+    plans.push(plan);
+  }
+  
+  localStorage.setItem('hyrox_custom_plans', JSON.stringify(plans));
+  
+  closeBuilder();
+  renderPlans();
+}
+
+init();
+</script>
+</body>
+</html>
