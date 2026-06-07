@@ -19,6 +19,8 @@
   })();
 </script>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -80,11 +82,8 @@
     place-items: center;
     width: 34px;
     height: 34px;
-    border: 2px solid var(--yellow);
-    border-radius: 7px;
-    color: var(--yellow);
-    font-size: 14px;
   }
+  .brand-mark img { width: 34px; height: 34px; display: block; border-radius: 8px; }
 
   .eyebrow {
     color: var(--yellow);
@@ -585,7 +584,7 @@
 <body>
   <header class="hero">
     <div class="hero-inner">
-      <div class="brand"><span class="brand-mark">H</span> HYROX Tracker</div>
+      <div class="brand"><span class="brand-mark"><img src="icons/icon-512.png" alt="HYROX Tracker logo"></span> HYROX Tracker</div>
       <div class="eyebrow">Race practice app</div>
       <h1>Know the race. Track the work.</h1>
       <p class="lead">HYROX is an indoor fitness race that alternates running with functional workout stations. This app gives you a simple race-day checklist, timers, progress tracking, and shareable results for practice runs.</p>
