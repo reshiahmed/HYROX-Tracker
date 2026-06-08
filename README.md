@@ -2,11 +2,15 @@
 
 HYROX Tracker is a lightweight, mobile-first Progressive Web App (PWA) designed to help athletes practice the official HYROX fitness race format. It provides a structured, ordered checklist of the runs and functional workout stations, complete with integrated timers to track individual section splits and total elapsed time during training sessions.
 
+Rather than just focusing on one category, the app is a comprehensive training companion supporting all official HYROX divisions (including Singles and Doubles) as well as custom-built workout plans.
+
 ## Features
 
-- **Race-Format Tracking**: Follows the strict structure of a HYROX race, allowing athletes to move through the workout in exact order without mental math.
-- **Multiple Divisions**: Pre-built trackers tailored for various divisions, including Men's Open, Men's Pro, Singles, and Doubles, with accurate weight specifications.
-- **Custom Workout Builder**: A flexible plan creator that lets users build, save, and edit custom workout sequences using official HYROX exercises.
+- **Full HYROX Division Support**: Pre-configured trackers tailored for official divisions:
+  - **Men's Open Singles & Doubles** (e.g., 152kg Sled Push, 103kg Sled Pull)
+  - **Men's Pro Singles & Doubles** (e.g., 202kg Sled Push, 153kg Sled Pull)
+- **Custom Workout Builder**: A flexible plan creator that lets users build, save, and edit custom workout sequences using official HYROX exercises, perfect for tailoring training runs or scaling workouts.
+- **Race-Format Checklist**: Locks the runs and stations in the exact official sequence (from SkiErg to Wall Balls) so athletes can focus on pacing discipline.
 - **Integrated Timers**: Tracks individual station/run times, automatically transitions when sections are checked off, and maintains a total session elapsed time.
 - **Offline Support (PWA)**: Installable to the home screen and fully capable of running offline, ensuring reliability in gyms with poor cellular reception.
 - **Performance Summary**: Generates a detailed breakdown at the end of the session, highlighting total run time, total station time, average pace, and identifying the fastest and slowest stations.
@@ -20,7 +24,7 @@ The application is intentionally built with zero heavy frameworks, prioritizing 
 - **State Management**: Browser `localStorage` is used extensively to preserve timer states during accidental reloads and to store custom workout plans locally on the device.
 - **PWA Capabilities**: Utilizes a Service Worker (`sw.js`) for aggressive offline caching and a Web App Manifest (`manifest.json`) for native-like installation.
 - **DOM to Image**: Includes `html2canvas.min.js` to render the final HTML summary view into a downloadable PNG image.
-- **Static Generation Tools**: Includes several Python utility scripts (`generate_pages.py`, `add_home.py`, `add_ms.py`, `add_photo.py`) used by developers to programmatically generate and update the static HTML files across the different tracker variants.
+- **Static Generation Tools**: Includes several Python utility scripts (`generate_pages.py`, `add_home.py`, `add_ms.py`, `add_photo.py`) used to programmatically generate and update the static HTML files across the different tracker variants.
 
 ## Application Structure
 
