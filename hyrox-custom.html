@@ -117,6 +117,26 @@
   .seq-action.remove {
     color: #ff6b6b; background: #2a1010; border-color: #4a1c1c; font-size: 19px;
   }
+  .roxzone-option {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    background: #101a1d; border: 1px solid #18343d; border-radius: 8px;
+    padding: 13px 14px; margin-bottom: 20px;
+  }
+  .roxzone-option-title { color: #82cce4; font-size: 13px; font-weight: 800; }
+  .roxzone-option-copy { color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .toggle-switch { position: relative; width: 48px; height: 28px; flex: 0 0 auto; }
+  .toggle-switch input { position: absolute; opacity: 0; pointer-events: none; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: #303030; border-radius: 20px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px;
+    background: #aaa; border-radius: 50%; transition: transform 0.2s, background 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-slider { background: #1d718c; }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); background: #fff; }
+  .toggle-switch input:focus-visible + .toggle-slider { outline: 2px solid var(--yellow); outline-offset: 2px; }
   
   .empty-msg { text-align: center; color: var(--dim); font-size: 14px; padding: 20px; }
 </style>
@@ -140,6 +160,17 @@
   <div class="form-group">
     <label>Plan Name</label>
     <input type="text" id="planName" placeholder="e.g. Ski/Row Focus">
+  </div>
+
+  <div class="roxzone-option">
+    <div>
+      <div class="roxzone-option-title">Include Roxzones</div>
+      <div class="roxzone-option-copy">Time transitions separately between exercises.</div>
+    </div>
+    <label class="toggle-switch" aria-label="Include Roxzones between exercises">
+      <input type="checkbox" id="includeRoxzones">
+      <span class="toggle-slider"></span>
+    </label>
   </div>
   
   <label>Add Exercise to Sequence</label>
@@ -191,7 +222,7 @@ function renderPlans() {
   container.innerHTML = plans.map((plan, idx) => `
     <div class="plan-card">
       <div class="plan-title">${plan.name}</div>
-      <div class="plan-desc">${plan.sequence.length} sections (${plan.sequence.map(s => s.name).slice(0,3).join(', ')}${plan.sequence.length>3?'...':''})</div>
+      <div class="plan-desc">${plan.sequence.length} exercises${plan.includeRoxzones ? ' · Roxzones on' : ''} (${plan.sequence.map(s => s.name).slice(0,3).join(', ')}${plan.sequence.length>3?'...':''})</div>
       <div class="plan-actions">
         <a class="btn-run" href="hyrox-custom-tracker.html?id=${plan.id}">▶ Start</a>
         <button class="btn-edit" onclick="editPlan(${idx})">Edit</button>
@@ -213,6 +244,7 @@ function editPlan(idx) {
   const plan = plans[idx];
   editingPlanId = plan.id;
   document.getElementById('planName').value = plan.name;
+  document.getElementById('includeRoxzones').checked = Boolean(plan.includeRoxzones);
   currentSequence = JSON.parse(JSON.stringify(plan.sequence));
   document.body.classList.add('builder-active');
   renderSequence();
@@ -325,6 +357,7 @@ function renderSequence() {
 function openBuilder() {
   document.body.classList.add('builder-active');
   document.getElementById('planName').value = '';
+  document.getElementById('includeRoxzones').checked = false;
   currentSequence = [];
   editingPlanId = null;
   renderSequence();
@@ -336,6 +369,7 @@ function closeBuilder() {
 
 function savePlan() {
   const name = document.getElementById('planName').value.trim();
+  const includeRoxzones = document.getElementById('includeRoxzones').checked;
   if (!name) return alert('Please enter a plan name.');
   if (currentSequence.length === 0) return alert('Please add at least one exercise.');
   
@@ -344,12 +378,14 @@ function savePlan() {
     if (plan) {
       plan.name = name;
       plan.sequence = currentSequence;
+      plan.includeRoxzones = includeRoxzones;
     }
   } else {
     const plan = {
       id: 'plan_' + Date.now(),
       name: name,
-      sequence: currentSequence
+      sequence: currentSequence,
+      includeRoxzones: includeRoxzones
     };
     plans.push(plan);
   }

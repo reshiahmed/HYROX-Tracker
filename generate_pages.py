@@ -10,7 +10,7 @@ pages = [
         "title": "HYROX Open Doubles – Practice Checklist",
         "title_main": "HYROX <em>Open Doubles</em>",
         "summary_footer": "HYROX Doubles · Men’s Open · Practice Run",
-        "key": "hyrox_open_doubles_v1",
+        "key": "hyrox_open_doubles_v2",
         "run": "Together · Target 5:00–5:30/km",
         "st1": "500 m each · Switch once",
         "st2": "152 kg · 25 m each · Switch at halfway",
@@ -26,7 +26,7 @@ pages = [
         "title": "HYROX Open Singles – Practice Checklist",
         "title_main": "HYROX <em>Open Singles</em>",
         "summary_footer": "HYROX Singles · Men’s Open · Practice Run",
-        "key": "hyrox_open_singles_v1",
+        "key": "hyrox_open_singles_v2",
         "run": "Solo run · Target 5:00–5:30/km",
         "st1": "1000 m SkiErg",
         "st2": "152 kg · 50 m Push",
@@ -42,7 +42,7 @@ pages = [
         "title": "HYROX Pro Doubles – Practice Checklist",
         "title_main": "HYROX <em>Pro Doubles</em>",
         "summary_footer": "HYROX Doubles · Men’s Pro · Practice Run",
-        "key": "hyrox_pro_doubles_v1",
+        "key": "hyrox_pro_doubles_v2",
         "run": "Together · Target 4:45–5:15/km",
         "st1": "500 m each · Switch once",
         "st2": "202 kg · 25 m each · Switch at halfway",
@@ -58,7 +58,7 @@ pages = [
         "title": "HYROX Pro Singles – Practice Checklist",
         "title_main": "HYROX <em>Pro Singles</em>",
         "summary_footer": "HYROX Singles · Men’s Pro · Practice Run",
-        "key": "hyrox_pro_singles_v1",
+        "key": "hyrox_pro_singles_v2",
         "run": "Solo run · Target 4:45–5:15/km",
         "st1": "1000 m SkiErg",
         "st2": "202 kg · 50 m Push",
@@ -80,7 +80,7 @@ for p in pages:
     # Update summary footer
     content = re.sub(r'<div class="summary-footer">HYROX Doubles · Men’s Open · Practice Run</div>', f'<div class="summary-footer">{p["summary_footer"]}</div>', content)
     # Update KEY
-    content = re.sub(r"const KEY = 'hyrox_v4';", f"const KEY = '{p['key']}';", content)
+    content = re.sub(r"const KEY = 'hyrox_v5';", f"const KEY = '{p['key']}';", content)
     
     # Update sections detail
     content = re.sub(r"id:'run\d'.*?detail:'[^']+'", lambda m: m.group(0).split("detail:'")[0] + f"detail:'{p['run']}'", content)
@@ -96,4 +96,3 @@ for p in pages:
     
     with open(p["filename"], "w", encoding="utf-8") as f:
         f.write(content)
-

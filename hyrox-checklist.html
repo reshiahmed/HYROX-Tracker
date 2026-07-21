@@ -176,6 +176,10 @@ main {
 .sec-head.station .sec-name { color: #e8e8e8; }
 .sec-head.station .sec-badge { background: #161616; color: #777; border: 1px solid #252525; }
 
+.sec-head.roxzone { border-left: 3px solid #42a5c6; }
+.sec-head.roxzone .sec-name { color: #82cce4; }
+.sec-head.roxzone .sec-badge { background: #0d1d22; color: #68b9d4; border: 1px solid #18343d; }
+
 .sec-name {
   flex: 1;
   font-size: 12px;
@@ -334,6 +338,31 @@ main {
 .start-btn:active { transform: scale(0.98); }
 
 .start-wrap.hidden { display: none; }
+
+.end-workout-wrap {
+  display: none;
+  max-width: 600px;
+  margin: 24px auto 0;
+  padding: 0 14px;
+}
+
+.end-workout-wrap.visible { display: block; }
+
+.end-workout-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.end-workout-btn:active { background: #2a1010; }
 
 
 /* ── MODAL ── */
@@ -642,6 +671,16 @@ main {
 .summary-table tr.station-row td:first-child { color: #ccc; }
 .summary-table tr.station-row td:last-child { color: #f0c000; }
 
+.summary-table tr.roxzone-row td:first-child { color: #68b9d4; }
+.summary-table tr.roxzone-row td:last-child { color: #82cce4; }
+
+.summary.summary-with-roxzones .summary-header { padding-top: 14px; padding-bottom: 12px; }
+.summary.summary-with-roxzones .summary-stat { padding-top: 9px; padding-bottom: 8px; }
+.summary.summary-with-roxzones .summary-table td { height: 23px; font-size: 10px; }
+.summary.summary-with-roxzones .summary-table td:nth-child(2) { font-size: 8px; }
+.summary.summary-with-roxzones .summary-table td:last-child { font-size: 11px; }
+.summary.summary-with-roxzones .summary-footer { padding-top: 9px; padding-bottom: 9px; }
+
 .summary-table tr.slowest td { background: rgba(255,60,60,0.06); }
 .summary-table tr.slowest td:last-child { color: #ff6b6b; }
 
@@ -793,6 +832,19 @@ main {
   </div>
 </div>
 
+<!-- End workout confirmation modal -->
+<div class="modal-overlay" id="endWorkoutModal">
+  <div class="modal-box">
+    <div class="modal-icon">■</div>
+    <div class="modal-title">End Workout?</div>
+    <div class="modal-sub">Only completed sections will appear in your summary. The active and remaining sections will be excluded.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="endWorkoutCancel">Keep Going</button>
+      <button class="modal-confirm" id="endWorkoutConfirm">End Workout</button>
+    </div>
+  </div>
+</div>
+
 
 
 <div class="start-wrap" id="startWrap">
@@ -800,6 +852,9 @@ main {
 </div>
 
 <main id="app"></main>
+<div class="end-workout-wrap" id="endWorkoutWrap">
+  <button class="end-workout-btn" id="endWorkoutBtn">■ End Workout</button>
+</div>
 <div class="summary-wrap" id="summaryWrap"></div>
 
 <script>
@@ -819,7 +874,7 @@ const INFO_CARDS = [
   ]},
 ];
 
-const SECTIONS = [
+const WORK_SECTIONS = [
   { id:'run1',  type:'run',     name:'Run 1',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
   { id:'st1',   type:'station', name:'Station 1 — SkiErg',             badge:'1000 m',   item:'1000 m completed',      detail:'500 m each · Switch once' },
   { id:'run2',  type:'run',     name:'Run 2',                          badge:'1 km',     item:'1 km run completed',    detail:'Together · Target 5:00–5:30/km' },
@@ -838,7 +893,21 @@ const SECTIONS = [
   { id:'st8',   type:'station', name:'Station 8 — Wall Balls',         badge:'100 reps', item:'100 reps completed',    detail:'6 kg ball · 3 m target · 50 reps each' },
 ];
 
-const KEY = 'hyrox_v4';
+const SECTIONS = WORK_SECTIONS.flatMap((section, idx) => {
+  if (idx === WORK_SECTIONS.length - 1) return [section];
+  const nextSection = WORK_SECTIONS[idx + 1];
+  const nextName = nextSection.name.replace(/^Station \d+ — /, '');
+  return [section, {
+    id: `rox${idx + 1}`,
+    type: 'roxzone',
+    name: `Roxzone ${idx + 1}`,
+    badge: 'Transition',
+    item: 'Roxzone completed',
+    detail: `Transition to ${nextName}`
+  }];
+});
+
+const KEY = 'hyrox_v5';
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
 
@@ -963,9 +1032,31 @@ function stopTotalTimer() {
   save();
 }
 
+function endWorkoutEarly() {
+  if (!state.totalStart || state.totalDone) return;
+  const now = Date.now();
+
+  SECTIONS.forEach(sec => {
+    const timer = state.timers[sec.id];
+    if (timer && timer.start && !timer.done) {
+      timer.elapsed = (timer.elapsed || 0) + (now - timer.start) / 1000;
+      timer.start = null;
+    }
+  });
+
+  state.totalElapsed = (state.totalElapsed || 0) + (now - state.totalStart) / 1000;
+  state.totalStart = null;
+  state.totalDone = true;
+  state.endedEarly = true;
+  save();
+  tick();
+  refreshLockStates();
+  buildSummary();
+}
+
 // Called whenever any checkbox changes — figures out what to start/stop
 function evaluateTimers() {
-  if (!hasRaceStarted()) return;
+  if (!hasRaceStarted() || state.totalDone) return;
 
   let prevComplete = true; // sections before index 0 are "done"
 
@@ -1153,49 +1244,57 @@ function buildUI() {
 
 function buildSummary() {
   const wrap = document.getElementById('summaryWrap');
-  const allDone = SECTIONS.every(s => state[s.id]);
-  if (!allDone || !state.totalDone) {
+  updateEndWorkoutButton();
+  if (!state.totalDone) {
     wrap.classList.remove('visible');
     wrap.innerHTML = '';
     return;
   }
 
-  const totalTime = state.totalElapsed || 0;
-  let runTotal = 0, stationTotal = 0;
+  const completedSections = SECTIONS.filter(sec => {
+    const timer = state.timers[sec.id];
+    return state[sec.id] && timer && timer.done;
+  });
+  let runTotal = 0, stationTotal = 0, roxzoneTotal = 0;
   let slowestStation = null, fastestStation = null;
   let slowestTime = 0, fastestTime = Infinity;
 
-  SECTIONS.forEach(sec => {
+  completedSections.forEach(sec => {
     const t = state.timers[sec.id];
-    const elapsed = t ? (t.elapsed || 0) : 0;
+    const elapsed = t.elapsed || 0;
     if (sec.type === 'run') runTotal += elapsed;
+    else if (sec.type === 'roxzone') roxzoneTotal += elapsed;
     else {
       stationTotal += elapsed;
       if (elapsed > slowestTime) { slowestTime = elapsed; slowestStation = sec.id; }
       if (elapsed < fastestTime) { fastestTime = elapsed; fastestStation = sec.id; }
     }
   });
+  const totalTime = runTotal + stationTotal + roxzoneTotal;
+  const completedRunCount = completedSections.filter(sec => sec.type === 'run').length;
+  const completedRoxzoneCount = completedSections.filter(sec => sec.type === 'roxzone').length;
+  const averageRun = completedRunCount ? fmt(runTotal / completedRunCount) : '--:--.--';
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
   let rows = '';
-  SECTIONS.forEach(sec => {
+  completedSections.forEach(sec => {
     const t = state.timers[sec.id];
-    const elapsed = t ? (t.elapsed || 0) : 0;
-    const isRun = sec.type === 'run';
+    const elapsed = t.elapsed || 0;
     const summaryName = sec.name.replace(/^Station \d+ — /, '');
-    let cls = isRun ? 'run-row' : 'station-row';
+    let cls = `${sec.type}-row`;
     let badge = '';
-    if (!isRun && sec.id === slowestStation) { cls += ' slowest'; badge = '<span class="summary-badge badge-slow">Slowest</span>'; }
-    if (!isRun && sec.id === fastestStation) { cls += ' fastest'; badge = '<span class="summary-badge badge-fast">Fastest</span>'; }
+    if (sec.type === 'station' && sec.id === slowestStation) { cls += ' slowest'; badge = '<span class="summary-badge badge-slow">Slowest</span>'; }
+    if (sec.type === 'station' && sec.id === fastestStation) { cls += ' fastest'; badge = '<span class="summary-badge badge-fast">Fastest</span>'; }
     rows += `<tr class="${cls}"><td>${summaryName}${badge}</td><td>${sec.badge}</td><td>${fmtTotal(elapsed)}</td></tr>`;
   });
+  if (!rows) rows = '<tr><td colspan="3" style="text-align:center;color:#666;">No completed sections</td></tr>';
 
   wrap.innerHTML = `
-    <div class="summary">
+    <div class="summary${completedRoxzoneCount ? ' summary-with-roxzones' : ''}">
       <div class="summary-header">
-        <div class="summary-title">Training Complete</div>
+        <div class="summary-title">${state.endedEarly ? 'Workout Summary' : 'Training Complete'}</div>
         <div class="summary-total">${fmtTotal(totalTime)}</div>
         <div class="summary-date">${dateStr}</div>
       </div>
@@ -1209,8 +1308,12 @@ function buildSummary() {
           <div class="summary-stat-value">${fmtTotal(stationTotal)}</div>
         </div>
         <div class="summary-stat">
+          <div class="summary-stat-label">Roxzone</div>
+          <div class="summary-stat-value">${fmtTotal(roxzoneTotal)}</div>
+        </div>
+        <div class="summary-stat">
           <div class="summary-stat-label">Avg / km</div>
-          <div class="summary-stat-value">${fmt(runTotal / 8)}</div>
+          <div class="summary-stat-value">${averageRun}</div>
         </div>
       </div>
       <table class="summary-table">
@@ -1304,6 +1407,24 @@ function buildSummary() {
 const resetModal = document.getElementById('resetModal');
 const modalCancel = document.getElementById('modalCancel');
 const modalConfirm = document.getElementById('modalConfirm');
+const endWorkoutModal = document.getElementById('endWorkoutModal');
+
+document.getElementById('endWorkoutBtn').addEventListener('click', function() {
+  if (state.totalStart && !state.totalDone) endWorkoutModal.classList.add('visible');
+});
+
+document.getElementById('endWorkoutCancel').addEventListener('click', function() {
+  endWorkoutModal.classList.remove('visible');
+});
+
+endWorkoutModal.addEventListener('click', function(event) {
+  if (event.target === endWorkoutModal) endWorkoutModal.classList.remove('visible');
+});
+
+document.getElementById('endWorkoutConfirm').addEventListener('click', function() {
+  endWorkoutModal.classList.remove('visible');
+  endWorkoutEarly();
+});
 
 document.getElementById('resetBtn').addEventListener('click', function() {
   resetModal.classList.add('visible');
@@ -1341,7 +1462,7 @@ function refreshLockStates() {
     if (!rowEl) return;
     const prevDone = idx === 0 ? raceStarted : (raceStarted && isSectionComplete(SECTIONS[idx - 1]));
     const thisDone = isSectionComplete(sec);
-    rowEl.classList.toggle('locked', !thisDone && !prevDone);
+    rowEl.classList.toggle('locked', !thisDone && (state.totalDone || !prevDone));
   });
 }
 
@@ -1350,6 +1471,12 @@ const startWrap = document.getElementById('startWrap');
 const startBtn  = document.getElementById('startBtn');
 
 function hideStartBtn() { startWrap.classList.add('hidden'); }
+
+function updateEndWorkoutButton() {
+  document.getElementById('endWorkoutWrap').classList.toggle(
+    'visible', Boolean(state.totalStart && !state.totalDone)
+  );
+}
 
 // Hide if race already in progress
 if (hasRaceStarted()) hideStartBtn();
@@ -1362,6 +1489,7 @@ startBtn.addEventListener('click', function() {
   hideStartBtn();
   save();
   refreshLockStates();
+  updateEndWorkoutButton();
 });
 
 // ── PREP MODAL ──
