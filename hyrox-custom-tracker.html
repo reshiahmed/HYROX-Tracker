@@ -1233,43 +1233,77 @@ function buildSummary() {
   `;
   wrap.classList.add('visible');
   
-  document.getElementById('savePhotoBtn').addEventListener('click', function() {
+  document.getElementById('savePhotoBtn').addEventListener('click', async function() {
     const btn = this;
     const originalText = btn.innerHTML;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const shareTestFile = new File([''], 'hyrox-summary.png', { type: 'image/png' });
+    const supportsFileShare = Boolean(navigator.share && navigator.canShare &&
+      navigator.canShare({ files: [shareTestFile] }));
+    const fallbackWindow = isIOS && !supportsFileShare ? window.open('', '_blank') : null;
+
+    if (fallbackWindow) {
+      fallbackWindow.document.title = 'HYROX Summary';
+      fallbackWindow.document.body.textContent = 'Preparing your photo...';
+    }
+
     btn.innerHTML = "Saving...";
     btn.disabled = true;
-    
-    setTimeout(() => {
+
+    let exportNode;
+    try {
       const source = document.querySelector('.summary');
-      const exportNode = source.cloneNode(true);
+      exportNode = source.cloneNode(true);
       exportNode.classList.add('summary-export');
       exportNode.style.position = 'fixed';
       exportNode.style.left = '-9999px';
       exportNode.style.top = '0';
       document.body.appendChild(exportNode);
 
-      html2canvas(exportNode, {
+      const canvas = await html2canvas(exportNode, {
         backgroundColor: '#0a0a0a',
         scale: 2,
         width: 540,
         height: 960,
         windowWidth: 540,
         windowHeight: 960
-      }).then(canvas => {
+      });
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(result => result ? resolve(result) : reject(new Error('PNG export failed')), 'image/png');
+      });
+      const file = new File([blob], 'hyrox-summary.png', { type: 'image/png' });
+      const isMobile = isIOS || /Android/i.test(navigator.userAgent);
+
+      if (isMobile && supportsFileShare) {
+        try {
+          await navigator.share({ files: [file], title: 'HYROX Summary' });
+          return;
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+        }
+      }
+
+      const imageUrl = URL.createObjectURL(blob);
+      if (fallbackWindow) {
+        fallbackWindow.location.href = imageUrl;
+      } else {
         const link = document.createElement('a');
         link.download = 'hyrox-summary.png';
-        link.href = canvas.toDataURL('image/png');
+        link.href = imageUrl;
+        document.body.appendChild(link);
         link.click();
-        
-        exportNode.remove();
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }).catch(() => {
-        exportNode.remove();
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      });
-    }, 100);
+        link.remove();
+      }
+      setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
+    } catch (error) {
+      if (fallbackWindow) fallbackWindow.close();
+      alert('Could not save the photo. Please try again.');
+    } finally {
+      if (exportNode) exportNode.remove();
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
   });
 }
 
