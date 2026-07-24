@@ -451,6 +451,179 @@ main {
 
 .modal-confirm:hover { background: #ffd700; }
 
+/* ── FEEDBACK ── */
+.fb-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%) translateY(140%);
+  width: calc(100% - 28px);
+  max-width: 420px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #f0c000;
+  border-radius: 10px;
+  padding: 16px 16px 14px;
+  z-index: 210;
+  transition: transform .28s ease;
+}
+
+.fb-toast.visible { transform: translateX(-50%) translateY(0); }
+
+.fb-toast-title {
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.fb-toast-sub {
+  font-size: 11px;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.fb-stars {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.fb-star {
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: #2e2e2e;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color .12s, transform .12s;
+}
+
+.fb-star:hover { transform: scale(1.15); }
+.fb-star.on { color: #f0c000; }
+
+.fb-toast-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.fb-dismiss {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  color: #666;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fb-dismiss:hover { border-color: #444; color: #aaa; }
+
+.fb-open {
+  flex: 1;
+  background: #f0c000;
+  border: none;
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fb-open:hover { background: #ffd700; }
+
+.fb-survey-box {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid #f0c000;
+  border-radius: 10px;
+  padding: 24px 20px 20px;
+  max-width: 420px;
+  width: 92%;
+  max-height: 88vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.fb-field { margin-bottom: 16px; }
+
+.fb-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 7px;
+}
+
+.fb-input,
+.fb-textarea {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  color: #ddd;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 10px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.fb-input:focus,
+.fb-textarea:focus { border-color: #f0c000; }
+
+.fb-textarea { resize: vertical; min-height: 68px; }
+
+.fb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.fb-chip {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  color: #777;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.fb-chip.on {
+  background: #f0c000;
+  border-color: #f0c000;
+  color: #000;
+}
+
+.fb-status {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  min-height: 14px;
+}
+
+.fb-status.error { color: #ff6b6b; }
+.fb-status.ok { color: #4ade80; }
+
 /* ── INFO CARDS ── */
 .info-cards {
   padding: 14px 14px 0;
@@ -841,6 +1014,88 @@ main {
     <div class="modal-actions">
       <button class="modal-cancel" id="endWorkoutCancel">Keep Going</button>
       <button class="modal-confirm" id="endWorkoutConfirm">End Workout</button>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback prompt toast -->
+<div class="fb-toast" id="fbToast">
+  <div class="fb-toast-title">Photo Saved</div>
+  <div class="fb-toast-sub">How was this tracker? Tap a star.</div>
+  <div class="fb-stars" id="fbToastStars">
+    <button class="fb-star" data-value="1">&#9733;</button>
+    <button class="fb-star" data-value="2">&#9733;</button>
+    <button class="fb-star" data-value="3">&#9733;</button>
+    <button class="fb-star" data-value="4">&#9733;</button>
+    <button class="fb-star" data-value="5">&#9733;</button>
+  </div>
+  <div class="fb-toast-actions">
+    <button class="fb-dismiss" id="fbToastDismiss">Not Now</button>
+    <button class="fb-open" id="fbToastOpen">Full Survey</button>
+  </div>
+</div>
+
+<!-- Full feedback survey -->
+<div class="modal-overlay" id="fbSurvey">
+  <div class="fb-survey-box">
+    <div class="modal-title" style="text-align:center;">Feedback</div>
+    <div class="modal-sub" style="text-align:center;margin-bottom:20px;">Takes 30 seconds. Helps make this better.</div>
+
+    <div class="fb-field">
+      <label class="fb-label">Overall rating <span style="color:#f0c000;">*</span></label>
+      <div class="fb-stars" id="fbSurveyStars" style="justify-content:flex-start;">
+        <button class="fb-star" data-value="1">&#9733;</button>
+        <button class="fb-star" data-value="2">&#9733;</button>
+        <button class="fb-star" data-value="3">&#9733;</button>
+        <button class="fb-star" data-value="4">&#9733;</button>
+        <button class="fb-star" data-value="5">&#9733;</button>
+      </div>
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label">How did the workout feel?</label>
+      <div class="fb-chips" id="fbDifficulty">
+        <button class="fb-chip" data-value="Too easy">Too Easy</button>
+        <button class="fb-chip" data-value="Just right">Just Right</button>
+        <button class="fb-chip" data-value="Brutal">Brutal</button>
+      </div>
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label">Most useful feature</label>
+      <div class="fb-chips" id="fbFavourite">
+        <button class="fb-chip" data-value="Section timers">Timers</button>
+        <button class="fb-chip" data-value="Summary photo">Summary Photo</button>
+        <button class="fb-chip" data-value="Checklist">Checklist</button>
+        <button class="fb-chip" data-value="Custom builder">Custom Builder</button>
+      </div>
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label" for="fbImprove">What could be better?</label>
+      <textarea class="fb-textarea" id="fbImprove" maxlength="4000" placeholder="Bugs, missing features, anything confusing..."></textarea>
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label" for="fbMessage">Anything else?</label>
+      <textarea class="fb-textarea" id="fbMessage" maxlength="4000" placeholder="Optional"></textarea>
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label" for="fbName">Name (optional)</label>
+      <input class="fb-input" id="fbName" type="text" maxlength="200" placeholder="Your name">
+    </div>
+
+    <div class="fb-field">
+      <label class="fb-label" for="fbEmail">Email (optional — if you want a reply)</label>
+      <input class="fb-input" id="fbEmail" type="email" maxlength="200" placeholder="you@example.com">
+    </div>
+
+    <div class="fb-status" id="fbStatus"></div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" id="fbCancel">Close</button>
+      <button class="modal-confirm" id="fbSubmit">Send</button>
     </div>
   </div>
 </div>
@@ -1375,6 +1630,7 @@ function buildSummary() {
       if (isMobile && supportsFileShare) {
         try {
           await navigator.share({ files: [file], title: 'HYROX Summary' });
+          showFeedbackToast();
           return;
         } catch (error) {
           if (error.name === 'AbortError') return;
@@ -1393,6 +1649,7 @@ function buildSummary() {
         link.remove();
       }
       setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
+      showFeedbackToast();
     } catch (error) {
       if (fallbackWindow) fallbackWindow.close();
       alert('Could not save the photo. Please try again.');
@@ -1509,6 +1766,160 @@ refreshLockStates();
 
 // Start global tick
 tickInterval = setInterval(tick, 30);
+
+/* ── FEEDBACK ── */
+const FEEDBACK_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdc_4tN14AoKLu3hzZaF437iQjSihQ7xsph5EJzbFC76Oc8QA/formResponse';
+const FEEDBACK_ENTRY_IDS = {
+  rating:     'entry.1821005939',
+  difficulty: 'entry.237815879',
+  favourite:  'entry.1752671782',
+  improve:    'entry.1716431037',
+  message:    'entry.1874930022',
+  name:       'entry.1757192079',
+  email:      'entry.178877308',
+  division:   'entry.1887361750',
+  totalTime:  'entry.2122063682'
+};
+const FEEDBACK_SEEN_KEY = 'hyrox_feedback_seen';
+
+const fbToast = document.getElementById('fbToast');
+const fbSurvey = document.getElementById('fbSurvey');
+const fbStatus = document.getElementById('fbStatus');
+let fbRating = 0;
+
+// Only ever prompt once per device. Dismissing or sending both close the door.
+function feedbackDone() {
+  try { return localStorage.getItem(FEEDBACK_SEEN_KEY) === '1'; } catch (e) { return false; }
+}
+
+function markFeedbackDone() {
+  try { localStorage.setItem(FEEDBACK_SEEN_KEY, '1'); } catch (e) {}
+}
+
+function showFeedbackToast() {
+  if (feedbackDone()) return;
+  setTimeout(() => fbToast.classList.add('visible'), 900);
+}
+
+function hideFeedbackToast() {
+  fbToast.classList.remove('visible');
+}
+
+function paintStars(container, value) {
+  container.querySelectorAll('.fb-star').forEach(star => {
+    star.classList.toggle('on', Number(star.dataset.value) <= value);
+  });
+}
+
+function setRating(value) {
+  fbRating = value;
+  paintStars(document.getElementById('fbToastStars'), value);
+  paintStars(document.getElementById('fbSurveyStars'), value);
+}
+
+function openFeedbackSurvey() {
+  hideFeedbackToast();
+  fbStatus.textContent = '';
+  fbStatus.className = 'fb-status';
+  fbSurvey.classList.add('visible');
+}
+
+document.getElementById('fbToastStars').addEventListener('click', function(event) {
+  const star = event.target.closest('.fb-star');
+  if (!star) return;
+  setRating(Number(star.dataset.value));
+  openFeedbackSurvey();
+});
+
+document.getElementById('fbSurveyStars').addEventListener('click', function(event) {
+  const star = event.target.closest('.fb-star');
+  if (!star) return;
+  setRating(Number(star.dataset.value));
+});
+
+// Chip groups behave as single-select.
+['fbDifficulty', 'fbFavourite'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(event) {
+    const chip = event.target.closest('.fb-chip');
+    if (!chip) return;
+    const wasOn = chip.classList.contains('on');
+    this.querySelectorAll('.fb-chip').forEach(c => c.classList.remove('on'));
+    if (!wasOn) chip.classList.add('on');
+  });
+});
+
+function chipValue(id) {
+  const chip = document.getElementById(id).querySelector('.fb-chip.on');
+  return chip ? chip.dataset.value : '';
+}
+
+document.getElementById('fbToastDismiss').addEventListener('click', function() {
+  markFeedbackDone();
+  hideFeedbackToast();
+});
+
+document.getElementById('fbToastOpen').addEventListener('click', openFeedbackSurvey);
+
+document.getElementById('fbCancel').addEventListener('click', function() {
+  fbSurvey.classList.remove('visible');
+});
+
+fbSurvey.addEventListener('click', function(event) {
+  if (event.target === fbSurvey) fbSurvey.classList.remove('visible');
+});
+
+document.getElementById('fbSubmit').addEventListener('click', async function() {
+  if (!fbRating) {
+    fbStatus.textContent = 'Please pick a star rating first.';
+    fbStatus.className = 'fb-status error';
+    return;
+  }
+
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  fbStatus.textContent = '';
+  fbStatus.className = 'fb-status';
+
+  const totalTime = state.totalDone && state.totalElapsed ? fmtTotal(state.totalElapsed) : '';
+  const values = {
+    rating: String(fbRating),
+    difficulty: chipValue('fbDifficulty'),
+    favourite: chipValue('fbFavourite'),
+    improve: document.getElementById('fbImprove').value.trim(),
+    message: document.getElementById('fbMessage').value.trim(),
+    name: document.getElementById('fbName').value.trim(),
+    email: document.getElementById('fbEmail').value.trim(),
+    division: document.title.replace(/\s*[–-].*$/, '').trim(),
+    totalTime: totalTime
+  };
+
+  const body = new URLSearchParams();
+  Object.keys(FEEDBACK_ENTRY_IDS).forEach(field => {
+    body.append(FEEDBACK_ENTRY_IDS[field], values[field] || '');
+  });
+
+  // Google Forms rejects CORS preflight, so we post opaquely. A resolved fetch
+  // means the request left the browser, not that Google accepted it.
+  try {
+    await fetch(FEEDBACK_ACTION, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
+    });
+    markFeedbackDone();
+    fbStatus.textContent = 'Thanks — feedback sent.';
+    fbStatus.className = 'fb-status ok';
+    btn.textContent = 'Sent';
+    setTimeout(() => fbSurvey.classList.remove('visible'), 1200);
+  } catch (error) {
+    fbStatus.textContent = 'Could not send. Check your connection and try again.';
+    fbStatus.className = 'fb-status error';
+    btn.disabled = false;
+    btn.textContent = 'Send';
+  }
+});
 </script>
 </body>
 </html>
