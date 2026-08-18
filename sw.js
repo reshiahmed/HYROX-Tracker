@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'hyrox-tracker-v22';
+const CACHE_VERSION = 'hyrox-tracker-v23';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const APP_SHELL = [
   './assets/race-format.png',
   './manifest.json',
   './vendor/html2canvas.min.js',
+  './icons/favicon-32.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
